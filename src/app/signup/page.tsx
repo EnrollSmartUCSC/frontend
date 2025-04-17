@@ -71,6 +71,10 @@ export default function Signup() {
       <Link href="/" className="absolute top-4 left-4">
         &lt;- Back to Homepage (placeholder for testing)
       </Link>
+
+      <Link href="/dashboard" className="absolute top-4 right-4">
+        -&gt; Go to dashboard (placeholder for testing)
+      </Link>
     </div>
   );
 }
