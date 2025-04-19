@@ -1,17 +1,12 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function Signup() {
-  const handleEmailSignup = (e: React.FormEvent) => {
+  const handleEmailSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Signup placeholder");
-    // Send to backend
-  };
-
-  const handleGoogleSignup = () => {
-    console.log("Signup Google Auth placeholder");
-    // Send to backend
+    // TODO: implement email/password signup via your backend or NextAuth credentials
   };
 
   return (
@@ -20,20 +15,19 @@ export default function Signup() {
 
       {/* Google Signup */}
       <button
-        onClick={handleGoogleSignup}
+        onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
         className="flex items-center gap-2 mb-4 px-10 py-2 border rounded
-          hover:bg-gray-100 hover:cursor-pointer
-          shadow-md active:shadow-sm"
+                   hover:bg-gray-100 hover:cursor-pointer
+                   shadow-md active:shadow-sm"
         style={{ borderColor: "#000" }}
       >
-        {/* TODO: add google logo to button */}
+        {/* TODO: add Google logo */}
         Continue with Google
       </button>
 
       <h2 className="text-sm mb-4">or</h2>
 
       {/* Email Signup */}
-      {/* TODO: Restrict to UCSC Email? */}
       <form className="flex flex-col gap-4 w-80" onSubmit={handleEmailSignup}>
         <input
           type="email"
@@ -48,13 +42,12 @@ export default function Signup() {
           className="px-3 py-2 border rounded"
           required
         />
-
-        {/* Button colors from UCSC Canvas logo */}
+        
         <button
           type="submit"
           className="px-4 py-2 text-white rounded
-            hover:bg-gray hover:cursor-pointer
-            shadow-md active:shadow-sm"
+                     hover:bg-gray hover:cursor-pointer
+                     shadow-md active:shadow-sm"
           style={{ backgroundColor: "#FDC700", color: "#003C6C" }}
         >
           Continue
@@ -69,11 +62,11 @@ export default function Signup() {
       </p>
 
       <Link href="/" className="absolute top-4 left-4">
-        &lt;- Back to Homepage (placeholder for testing)
+        &lt;- Back to Homepage
       </Link>
 
       <Link href="/dashboard" className="absolute top-4 right-4">
-        -&gt; Go to dashboard (placeholder for testing)
+        -&gt; Go to Dashboard
       </Link>
     </div>
   );

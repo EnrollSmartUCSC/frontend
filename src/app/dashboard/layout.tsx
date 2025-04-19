@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import React from "react";
 
 export default function DashboardLayout({
@@ -15,7 +16,7 @@ export default function DashboardLayout({
           <Link
             href="/dashboard"
             className="block text-3xl px-4 py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+                       hover:cursor-pointer hover:bg-gray-300"
           >
             EnrollSmart
           </Link>
@@ -23,43 +24,37 @@ export default function DashboardLayout({
           <Link
             href="/dashboard/tab-1"
             className="block text-center py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+                       hover:cursor-pointer hover:bg-gray-300"
           >
             Tab1
           </Link>
-
           <Link
             href="/dashboard/tab-2"
             className="block text-center py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+                       hover:cursor-pointer hover:bg-gray-300"
           >
             Tab2
           </Link>
-
           <Link
             href="/dashboard/tab-3"
             className="block text-center py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+                       hover:cursor-pointer hover:bg-gray-300"
           >
             Tab3
           </Link>
 
-          {/* User sign out (will need to clear session auth in backend) */}
-          <Link
-            href="/"
-            onClick={() => {
-              console.log("User signing out");
-              // backend sign out
-            }}
+          {/* Real Sign Out button */}
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
             className="mt-auto block text-center py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+                       hover:cursor-pointer hover:bg-gray-300"
           >
             Sign Out
-          </Link>
+          </button>
         </nav>
       </aside>
 
-      <main className="flex-1 p8">{children}</main>
+      <main className="flex-1 p-8">{children}</main>
     </div>
   );
 }
