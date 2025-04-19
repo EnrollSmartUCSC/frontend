@@ -22,20 +22,32 @@ Build the OAuth 2.0 Client locally through the Google Cloud Console to ensure th
 
 Create a file at the root of your project called .env.local
 
-example of .env.local:
+Example of .env.local:
+
 NEXTAUTH_URL=http://localhost:3000
+
 NEXTAUTH_SECRET=<a-base64-secret>
+
 GOOGLE_CLIENT_ID=<your-google-client-id>
+
 GOOGLE_CLIENT_SECRET=<your-google-client-secret>
 
-if you want to Run locally, you need to create a OAuth 2.0 Client on Google Cloud console
-this file shoud named <.env.local>
+If you want to Run locally, you need to create a OAuth 2.0 Client on Google Cloud console
+
+This file shoud named <.env.local>
+
 Here are some pieces of information that you might use: 
+
 Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
+
 Authorized JavaScript origins: http://localhost:3000
+
 You can generate NEXTAUTH_SECRET by using the following command in powershell:
+
 $bytes = [byte[]]::new(32)
+
 [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+
 [Convert]::ToBase64String($bytes)
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
