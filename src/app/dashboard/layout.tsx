@@ -25,7 +25,7 @@ export default function DashboardLayout({
             className="block text-center py-2 rounded
               hover:cursor-pointer hover:bg-gray-300"
           >
-            Tab1
+            Course Search
           </Link>
 
           <Link
