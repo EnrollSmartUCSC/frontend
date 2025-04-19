@@ -26,11 +26,11 @@ Example of .env.local:
 
 NEXTAUTH_URL=http://localhost:3000
 
-NEXTAUTH_SECRET=<a-base64-secret>
+NEXTAUTH_SECRET= a-base64-secret
 
-GOOGLE_CLIENT_ID=<your-google-client-id>
+GOOGLE_CLIENT_ID= your-google-client-id
 
-GOOGLE_CLIENT_SECRET=<your-google-client-secret>
+GOOGLE_CLIENT_SECRET= your-google-client-secret
 
 If you want to Run locally, you need to create a OAuth 2.0 Client on Google Cloud console
 
