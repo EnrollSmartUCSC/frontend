@@ -42,13 +42,6 @@ Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
 
 Authorized JavaScript origins: http://localhost:3000
 
-You can generate NEXTAUTH_SECRET by using the following command in powershell:
-
-$bytes = [byte[]]::new(32)
-
-[System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
-
-[Convert]::ToBase64String($bytes)
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
