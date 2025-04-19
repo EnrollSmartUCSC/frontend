@@ -28,12 +28,12 @@ NEXTAUTH_SECRET=<a-base64-secret>
 GOOGLE_CLIENT_ID=<your-google-client-id>
 GOOGLE_CLIENT_SECRET=<your-google-client-secret>
 
-# if you want to Run locally, you need to create a OAuth 2.0 Client on Google Cloud console
-# this file shoud named <.env.local>
-# Here are some pieces of information that you might use: 
-# Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
-# Authorized JavaScript origins: http://localhost:3000
-# You can generate NEXTAUTH_SECRET by using the following command in powershell:
+if you want to Run locally, you need to create a OAuth 2.0 Client on Google Cloud console
+this file shoud named <.env.local>
+Here are some pieces of information that you might use: 
+Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
+Authorized JavaScript origins: http://localhost:3000
+You can generate NEXTAUTH_SECRET by using the following command in powershell:
 $bytes = [byte[]]::new(32)
 [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
 [Convert]::ToBase64String($bytes)
