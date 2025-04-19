@@ -1,10 +1,10 @@
-import Image from "next/image";
-{
-  /* no images yet, but will include logo soon */
-}
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-8 items-center text-center">
@@ -20,23 +20,21 @@ export default function Home() {
         </p>
 
         <div className="flex gap-4">
-          <Link href="/signup">
-            <button
-              className="px-6 py-3 bg-blue-500 text-white rounded
+          <button
+            onClick={() => router.push("/signup")}
+            className="px-6 py-3 bg-blue-500 text-white rounded
               hover:bg-blue-600 hover:cursor-pointer"
-            >
-              Sign Up
-            </button>
-          </Link>
+          >
+            Sign Up
+          </button>
 
-          <Link href="/login">
-            <button
-              className="px-6 py-3 bg-gray-500 text-white rounded 
+          <button
+            onClick={() => router.push("/login")}
+            className="px-6 py-3 bg-gray-500 text-white rounded 
               hover:bg-gray-600 hover:cursor-pointer"
-            >
-              Login
-            </button>
-          </Link>
+          >
+            Login
+          </button>
         </div>
       </main>
     </div>

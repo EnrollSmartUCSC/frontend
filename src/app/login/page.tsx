@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-// Will probably convert to modal page accessible from the homepage in the future
 export default function Login() {
+  const router = useRouter();
+
   const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Login placeholder");
-    // Send to backend
   };
 
   const handleGoogleLogin = () => {
     console.log("Login Google Auth placeholder");
-    // Send to backend
   };
 
   return (
@@ -27,14 +27,12 @@ export default function Login() {
           shadow-md active:shadow-sm"
         style={{ borderColor: "#000" }}
       >
-        {/* TODO: add google logo to button */}
         Continue with Google
       </button>
 
       <h2 className="text-sm mb-4">or</h2>
 
       {/* Email Signup */}
-      {/* TODO: Restrict to UCSC Email? */}
       <form className="flex flex-col gap-4 w-80" onSubmit={handleEmailLogin}>
         <input
           type="email"
@@ -50,7 +48,6 @@ export default function Login() {
           required
         />
 
-        {/* Button colors from UCSC Canvas logo */}
         <button
           type="submit"
           className="px-4 py-2 text-white rounded
@@ -64,18 +61,27 @@ export default function Login() {
 
       <p className="mt-4">
         Don't have an account?{" "}
-        <Link href="/signup" className="text-blue-500 hover:underline">
-          Sign Up Here
-        </Link>
+        <button
+          onClick={() => router.push("/signup")}
+          className="text-blue-500 hover:cursor-pointer hover:underline"
+        >
+          Sign up Here
+        </button>
       </p>
 
-      <Link href="/" className="absolute top-4 left-4">
-        &lt;- Back to Homepage (placeholder for testing)
-      </Link>
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-4 left-4 hover:cursor-pointer"
+      >
+        &lt;- Back to Homepage (placeholder)
+      </button>
 
-      <Link href="/dashboard" className="absolute top-4 right-4">
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="absolute top-4 right-4 hover:cursor-pointer"
+      >
         -&gt; Go to dashboard (placeholder for testing)
-      </Link>
+      </button>
     </div>
   );
 }
