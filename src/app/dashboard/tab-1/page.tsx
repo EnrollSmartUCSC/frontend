@@ -162,10 +162,10 @@ export default function Tab1() {
                 <h2 className="text-2xl font-semibold mb-2">
                   {selectedCourse.code}: {selectedCourse.name} ({selectedCourse.credits} Credits)
                 </h2>
-                <p className="text-xl mt-2"> {selectedCourse.description}</p>
+                <p className="text-xl mb-2"> {selectedCourse.description}</p>
                 <p><strong>Quarter:</strong> {selectedCourse.quarter}</p>
-                <p className="mt-2"><strong>Prerequisites:</strong> {selectedCourse.prerequisites || 'None'}</p>
-                <p className="mt-2"><strong>Meeting Days:</strong> {selectedCourse.meeting_days}</p>
+                <p><strong>Prerequisites:</strong> {selectedCourse.prerequisites || 'None'}</p>
+                <p><strong>Meeting Days:</strong> {selectedCourse.meeting_days}</p>
                 <p><strong>Time:</strong> {selectedCourse.start_time} — {selectedCourse.end_time}</p>
                 <p><strong>Location:</strong> {selectedCourse.location}</p>
                 <p><strong>Instructor:</strong> {selectedCourse.instructor}</p>
