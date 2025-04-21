@@ -75,12 +75,18 @@ export default function Tab1() {
   const handlePinUnpin = () => {
     if (!selectedCourse) return;
     const exists = pinnedCourses.some(
-      (course) => course.code === selectedCourse.code && course.quarter === selectedCourse.quarter
+      (course) =>
+        course.code === selectedCourse.code &&
+        course.quarter === selectedCourse.quarter
     );
     if (exists) {
       setPinnedCourses(
         pinnedCourses.filter(
-          (course) => !(course.code === selectedCourse.code && course.quarter === selectedCourse.quarter)
+          (course) =>
+            !(
+              course.code === selectedCourse.code &&
+              course.quarter === selectedCourse.quarter
+            )
         )
       );
     } else {
@@ -89,10 +95,12 @@ export default function Tab1() {
   };
 
   const isPinned = selectedCourse
-  ? pinnedCourses.some(
-      (course) => course.code === selectedCourse.code && course.quarter === selectedCourse.quarter
-    )
-  : false;
+    ? pinnedCourses.some(
+        (course) =>
+          course.code === selectedCourse.code &&
+          course.quarter === selectedCourse.quarter
+      )
+    : false;
 
   return (
     <div className="flex flex-col h-screen">
@@ -160,15 +168,30 @@ export default function Tab1() {
             <>
               <div>
                 <h2 className="text-2xl font-semibold mb-2">
-                  {selectedCourse.code}: {selectedCourse.name} ({selectedCourse.credits} Credits)
+                  {selectedCourse.code}: {selectedCourse.name} (
+                  {selectedCourse.credits} Credits)
                 </h2>
                 <p className="text-xl mb-2"> {selectedCourse.description}</p>
-                <p><strong>Quarter:</strong> {selectedCourse.quarter}</p>
-                <p><strong>Prerequisites:</strong> {selectedCourse.prerequisites || 'None'}</p>
-                <p><strong>Meeting Days:</strong> {selectedCourse.meeting_days}</p>
-                <p><strong>Time:</strong> {selectedCourse.start_time} — {selectedCourse.end_time}</p>
-                <p><strong>Location:</strong> {selectedCourse.location}</p>
-                <p><strong>Instructor:</strong> {selectedCourse.instructor}</p>
+                <p>
+                  <strong>Quarter:</strong> {selectedCourse.quarter}
+                </p>
+                <p>
+                  <strong>Prerequisites:</strong>{" "}
+                  {selectedCourse.prerequisites || "None"}
+                </p>
+                <p>
+                  <strong>Meeting Days:</strong> {selectedCourse.meeting_days}
+                </p>
+                <p>
+                  <strong>Time:</strong> {selectedCourse.start_time} —{" "}
+                  {selectedCourse.end_time}
+                </p>
+                <p>
+                  <strong>Location:</strong> {selectedCourse.location}
+                </p>
+                <p>
+                  <strong>Instructor:</strong> {selectedCourse.instructor}
+                </p>
               </div>
 
               <div className="mt-auto">
@@ -197,7 +220,8 @@ const mockCourses: CourseInfo[] = [
     name: "Programming Languages and Techniques",
     quarter: "Spring 2025",
     credits: 4,
-    description: "An introduction to programming languages, focusing on paradigms and implementation.",
+    description:
+      "An introduction to programming languages, focusing on paradigms and implementation.",
     prerequisites: "CSE 12 or equivalent",
     meeting_days: "Mon/Wed",
     start_time: "10:00 AM",
@@ -210,7 +234,8 @@ const mockCourses: CourseInfo[] = [
     name: "Software Construction",
     quarter: "Fall 2025",
     credits: 5,
-    description: "Principles and techniques for construction of large-scale software.",
+    description:
+      "Principles and techniques for construction of large-scale software.",
     prerequisites: "CSE 12",
     meeting_days: "Tue/Thu",
     start_time: "2:00 PM",
@@ -327,7 +352,8 @@ const mockCourses: CourseInfo[] = [
     name: "Electricity and Magnetism",
     quarter: "Summer 2025",
     credits: 5,
-    description: "Electric and magnetic fields, circuits, and Maxwell’s equations.",
+    description:
+      "Electric and magnetic fields, circuits, and Maxwell’s equations.",
     prerequisites: "PHYS 5B",
     meeting_days: "Tue/Thu",
     start_time: "12:30 PM",
@@ -366,7 +392,8 @@ const mockCourses: CourseInfo[] = [
     name: "California History",
     quarter: "Spring 2025",
     credits: 4,
-    description: "Survey of California history from pre-contact to the present.",
+    description:
+      "Survey of California history from pre-contact to the present.",
     prerequisites: "None",
     meeting_days: "Mon/Wed",
     start_time: "2:00 PM",
