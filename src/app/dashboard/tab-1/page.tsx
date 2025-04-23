@@ -2,25 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 
-/*
-  Placeholder interface for testing purposes
-
-  In practice we should only prefetch the course codes and names,
-  then fetch from the backend when a course is selected
-
-  Also need to work on displaying courses with multiple sections:
-    - Multiple lecture time slots
-    - Lab sections tied to a lecture time slot
-    - Multiple generic (non-assigned) lab sections
-  So will need to change the type of some of these fields
-*/
-interface CourseInfo {
-  code: string;
-  name: string;
-  quarter: string;
-  description: string;
-  credits: number;
-  prerequisites: string;
+// Lab sections: attached to a lecture timeslot
+// Alternatively, may not exist at all
+interface LabInfo {
   meeting_days: string;
   start_time: string;
   end_time: string;
@@ -28,16 +12,45 @@ interface CourseInfo {
   instructor: string;
 }
 
+interface LectureInfo {
+  meeting_days: string;
+  start_time: string;
+  end_time: string;
+  location: string;
+  instructor: string;
+  lab_sections: LabInfo[];
+}
+
+// Course summary:
+//  ~ What is prefetched and displayed in the search results component
+//  ~ Every field that's NOT included here will be fetched on demand
+type CourseSummary = {
+  code: string;
+  name: string;
+  quarter: string;
+};
+
+// Full course details:
+//  ~ What is displayed in the course details component
+//  ~ Displayed after clicking on an individual course in search results
+//  ~ These fields are what will be fetched on demand
+type CourseInfo = CourseSummary & {
+  description: string;
+  prerequisites: string;
+  credits: number;
+  lectures: LectureInfo[];
+};
+
 export default function Tab1() {
   const [query, setQuery] = useState("");
-  const [courses, setCourses] = useState<CourseInfo[]>([]);
+  const [courses, setCourses] = useState<CourseSummary[]>([]);
   const [pinnedCourses, setPinnedCourses] = useState<CourseInfo[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<CourseInfo | null>(null);
 
-  // Will replace with fetch of real data
-  // Current mock data at bottom of this file
   useEffect(() => {
-    setCourses(mockCourses);
+    setCourses(
+      mockCourses.map(({ code, name, quarter }) => ({ code, name, quarter }))
+    );
   }, []);
 
   /* 
@@ -57,7 +70,7 @@ export default function Tab1() {
     ~ Case (cse115a === CSE115A)
     ~ Whitespace (CSE115A === CSE 115A)
   */
-  const normalize = (s: string) => s.replace(/\s+/g, "").toUpperCase();
+  const normalize = (s: string) => s.replace(/\s+/g, "").toLowerCase();
   const filtered = useMemo(() => {
     if (!query.trim()) return courses;
     const q = normalize(query);
@@ -65,27 +78,38 @@ export default function Tab1() {
       const codeKey = normalize(c.code);
       const nameKey = normalize(c.name);
       if (codeKey.includes(q)) return true;
-      const alpha = codeKey.match(/^[A-Z]+/)?.[0] || "";
+      const alpha = codeKey.match(/^[a-z]+/)?.[0] || "";
       if (alpha.startsWith(q)) return true;
       if (nameKey.includes(q)) return true;
       return false;
     });
   }, [query, courses]);
 
-  const handlePinUnpin = () => {
+  // Select a course and load details from mock
+  // Note:
+  //   After we have actual implementation to read from an endpoint,
+  //   This will instead fetch course details as a request to the backend
+  const handleSelect = (summary: CourseSummary) => {
+    const course = mockCourses.find(
+      (c) => c.code === summary.code && c.quarter === summary.quarter
+    );
+    setSelectedCourse(course ?? null);
+  };
+
+  // Pin / unpin logic
+  const togglePin = () => {
     if (!selectedCourse) return;
     const exists = pinnedCourses.some(
-      (course) =>
-        course.code === selectedCourse.code &&
-        course.quarter === selectedCourse.quarter
+      (c) =>
+        c.code === selectedCourse.code && c.quarter === selectedCourse.quarter
     );
     if (exists) {
       setPinnedCourses(
         pinnedCourses.filter(
-          (course) =>
+          (c) =>
             !(
-              course.code === selectedCourse.code &&
-              course.quarter === selectedCourse.quarter
+              c.code === selectedCourse.code &&
+              c.quarter === selectedCourse.quarter
             )
         )
       );
@@ -96,9 +120,8 @@ export default function Tab1() {
 
   const isPinned = selectedCourse
     ? pinnedCourses.some(
-        (course) =>
-          course.code === selectedCourse.code &&
-          course.quarter === selectedCourse.quarter
+        (c) =>
+          c.code === selectedCourse.code && c.quarter === selectedCourse.quarter
       )
     : false;
 
@@ -111,7 +134,7 @@ export default function Tab1() {
       <main className="flex flex-1 p-4 overflow-hidden">
         {/* Pinned Courses Panel */}
         <div className="flex flex-col w-1/5 pr-4 h-full border-r-2 border-gray-500 mr-4">
-          <h2 className="text-xl mb-4">My Pinned Courses</h2>
+          <h2 className="text-xl mb-4">Pinned Courses</h2>
           <div className="flex-1 overflow-y-auto border rounded p-2">
             {pinnedCourses.length > 0 ? (
               <ul className="space-y-2">
@@ -121,7 +144,7 @@ export default function Tab1() {
                     className="p-2 rounded cursor-pointer hover:bg-gray-100"
                     onClick={() => setSelectedCourse(c)}
                   >
-                    {c.code} — {c.name}
+                    <span className="font-semibold">{c.code}</span> — {c.name}
                   </li>
                 ))}
               </ul>
@@ -131,7 +154,7 @@ export default function Tab1() {
           </div>
         </div>
 
-        {/* Search + Filtered Courses Panel */}
+        {/* Search Panel */}
         <div className="flex flex-col w-1/4 pr-4 h-full">
           <input
             type="text"
@@ -140,19 +163,16 @@ export default function Tab1() {
             onChange={(e) => setQuery(e.target.value)}
             className="mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-yellow-500"
           />
-
           <div className="flex-1 overflow-y-auto border rounded p-2">
             {filtered.length > 0 ? (
               <ul className="space-y-2">
-                {filtered.map((course) => (
+                {filtered.map((c) => (
                   <li
-                    key={course.code + course.quarter}
-                    className={`p-2 rounded cursor-pointer hover:bg-gray-100 ${
-                      selectedCourse === course ? "bg-gray-200" : ""
-                    }`}
-                    onClick={() => setSelectedCourse(course)}
+                    key={c.code + c.quarter}
+                    className="p-2 rounded cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSelect(c)}
                   >
-                    {course.code} — {course.name}
+                    <span className="font-semibold">{c.code}</span> — {c.name}
                   </li>
                 ))}
               </ul>
@@ -162,41 +182,71 @@ export default function Tab1() {
           </div>
         </div>
 
-        {/* Course Detail Display */}
+        {/* Detail Panel */}
         <div className="flex-1 ml-4 border rounded p-4 flex flex-col overflow-auto">
           {selectedCourse ? (
             <>
-              <div>
-                <h2 className="text-2xl font-semibold mb-2">
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold">
                   {selectedCourse.code}: {selectedCourse.name} (
                   {selectedCourse.credits} Credits)
                 </h2>
-                <p className="text-xl mb-2"> {selectedCourse.description}</p>
-                <p>
-                  <strong>Quarter:</strong> {selectedCourse.quarter}
-                </p>
-                <p>
+
+                <p className="mt-2">{selectedCourse.description}</p>
+
+                <p className="mt-2">
                   <strong>Prerequisites:</strong>{" "}
                   {selectedCourse.prerequisites || "None"}
                 </p>
-                <p>
-                  <strong>Meeting Days:</strong> {selectedCourse.meeting_days}
-                </p>
-                <p>
-                  <strong>Time:</strong> {selectedCourse.start_time} —{" "}
-                  {selectedCourse.end_time}
-                </p>
-                <p>
-                  <strong>Location:</strong> {selectedCourse.location}
-                </p>
-                <p>
-                  <strong>Instructor:</strong> {selectedCourse.instructor}
-                </p>
               </div>
+
+              <h3 className="text-lg font-bold mb-2">Section Details</h3>
+              <p className="italic mb-2">Quarter: {selectedCourse.quarter}</p>
+
+              <table className="w-full table-auto border-collapse">
+                <thead>
+                  <tr>
+                    <th className="border px-2 py-1">Type</th>
+                    <th className="border px-2 py-1">Days</th>
+                    <th className="border px-2 py-1">Time</th>
+                    <th className="border px-2 py-1">Location</th>
+                    <th className="border px-2 py-1">Instructor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedCourse.lectures.map((lec, i) => (
+                    <React.Fragment key={i}>
+                      <tr className="hover:bg-gray-50">
+                        <td className="border px-2 py-1">Lecture</td>
+                        <td className="border px-2 py-1">{lec.meeting_days}</td>
+                        <td className="border px-2 py-1">
+                          {lec.start_time}—{lec.end_time}
+                        </td>
+                        <td className="border px-2 py-1">{lec.location}</td>
+                        <td className="border px-2 py-1">{lec.instructor}</td>
+                      </tr>
+
+                      {lec.lab_sections.map((lab, j) => (
+                        <tr key={j} className="bg-gray-50 hover:bg-gray-100">
+                          <td className="border px-2 py-1">Lab</td>
+                          <td className="border px-2 py-1">
+                            {lab.meeting_days}
+                          </td>
+                          <td className="border px-2 py-1">
+                            {lab.start_time}—{lab.end_time}
+                          </td>
+                          <td className="border px-2 py-1">{lab.location}</td>
+                          <td className="border px-2 py-1">{lab.instructor}</td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
 
               <div className="mt-auto">
                 <button
-                  onClick={handlePinUnpin}
+                  onClick={togglePin}
                   className="px-4 py-2 rounded hover:cursor-pointer"
                   style={{ backgroundColor: "#FDC700", color: "#003C6C" }}
                 >
@@ -213,7 +263,7 @@ export default function Tab1() {
   );
 }
 
-// Generated by ChatGPT
+// GPT-generated mock data
 const mockCourses: CourseInfo[] = [
   {
     code: "CSE 140",
@@ -223,25 +273,42 @@ const mockCourses: CourseInfo[] = [
     description:
       "An introduction to programming languages, focusing on paradigms and implementation.",
     prerequisites: "CSE 12 or equivalent",
-    meeting_days: "Mon/Wed",
-    start_time: "10:00 AM",
-    end_time: "11:50 AM",
-    location: "EH 206",
-    instructor: "Dr. Alice Smith",
+    lectures: [
+      {
+        meeting_days: "Mon/Wed",
+        start_time: "10:00 AM",
+        end_time: "11:50 AM",
+        location: "EH 206",
+        instructor: "Dr. Alice Smith",
+        lab_sections: [
+          {
+            meeting_days: "Fri",
+            start_time: "2:00 PM",
+            end_time: "3:50 PM",
+            location: "EH 208",
+            instructor: "TA John Doe",
+          },
+        ],
+      },
+    ],
   },
   {
     code: "CSE 101",
     name: "Software Construction",
     quarter: "Fall 2025",
     credits: 5,
-    description:
-      "Principles and techniques for construction of large-scale software.",
+    description: "Principles and techniques for large-scale software.",
     prerequisites: "CSE 12",
-    meeting_days: "Tue/Thu",
-    start_time: "2:00 PM",
-    end_time: "3:50 PM",
-    location: "ISB 121",
-    instructor: "Prof. Bob Jones",
+    lectures: [
+      {
+        meeting_days: "Tue/Thu",
+        start_time: "2:00 PM",
+        end_time: "3:50 PM",
+        location: "ISB 121",
+        instructor: "Prof. Bob Jones",
+        lab_sections: [],
+      },
+    ],
   },
   {
     code: "MATH 1A",
@@ -250,194 +317,15 @@ const mockCourses: CourseInfo[] = [
     credits: 4,
     description: "Differential calculus of one variable.",
     prerequisites: "None",
-    meeting_days: "Mon/Wed/Fri",
-    start_time: "9:00 AM",
-    end_time: "9:50 AM",
-    location: "Kresge 100",
-    instructor: "Dr. Carol Lee",
-  },
-  {
-    code: "CSE 190",
-    name: "Software Engineering",
-    quarter: "Winter 2025",
-    credits: 4,
-    description: "Team-based software development project course.",
-    prerequisites: "CSE 101",
-    meeting_days: "Mon/Wed/Fri",
-    start_time: "1:00 PM",
-    end_time: "1:50 PM",
-    location: "PCYNH 336",
-    instructor: "Dr. Daniel Kim",
-  },
-  {
-    code: "PHYS 5A",
-    name: "Mechanics and Wave Motion",
-    quarter: "Fall 2025",
-    credits: 5,
-    description: "Introduction to classical mechanics and wave motion.",
-    prerequisites: "PHYS 2A",
-    meeting_days: "Tue/Thu",
-    start_time: "11:00 AM",
-    end_time: "12:20 PM",
-    location: "Science & Engineering 2, Room 120",
-    instructor: "Prof. Emily Zhang",
-  },
-  {
-    code: "MUS 21A",
-    name: "History of Western Music I",
-    quarter: "Spring 2025",
-    credits: 3,
-    description: "Survey of Western music from antiquity through the Baroque.",
-    prerequisites: "None",
-    meeting_days: "Tue/Thu",
-    start_time: "3:00 PM",
-    end_time: "4:20 PM",
-    location: "Music 428",
-    instructor: "Dr. Frank Rivera",
-  },
-  {
-    code: "CSE 101L",
-    name: "Software Construction Lab",
-    quarter: "Fall 2025",
-    credits: 1,
-    description: "Laboratory for CSE 101.",
-    prerequisites: "CSE 101",
-    meeting_days: "Fri",
-    start_time: "2:00 PM",
-    end_time: "4:50 PM",
-    location: "ISB 123",
-    instructor: "Ms. Grace Lee",
-  },
-  {
-    code: "ART 10A",
-    name: "Drawing I",
-    quarter: "Winter 2025",
-    credits: 3,
-    description: "Fundamentals of drawing techniques and composition.",
-    prerequisites: "None",
-    meeting_days: "Mon/Wed",
-    start_time: "5:00 PM",
-    end_time: "6:20 PM",
-    location: "Arts 2, Studio 1",
-    instructor: "Prof. Hannah Park",
-  },
-  {
-    code: "CSE 12",
-    name: "Data Structures and Programming",
-    quarter: "Winter 2025",
-    credits: 4,
-    description: "Algorithms, data structures, and programming techniques.",
-    prerequisites: "CSE 8A",
-    meeting_days: "Tue/Thu",
-    start_time: "8:00 AM",
-    end_time: "9:50 AM",
-    location: "STEIN 123",
-    instructor: "Dr. Ian Michaels",
-  },
-  {
-    code: "MATH 19B",
-    name: "Calculus II",
-    quarter: "Spring 2025",
-    credits: 4,
-    description: "Integral calculus and infinite series.",
-    prerequisites: "MATH 19A",
-    meeting_days: "Mon/Wed/Fri",
-    start_time: "11:00 AM",
-    end_time: "11:50 AM",
-    location: "Kresge 101",
-    instructor: "Prof. Julia Nguyen",
-  },
-  {
-    code: "PHYS 5C",
-    name: "Electricity and Magnetism",
-    quarter: "Summer 2025",
-    credits: 5,
-    description:
-      "Electric and magnetic fields, circuits, and Maxwell’s equations.",
-    prerequisites: "PHYS 5B",
-    meeting_days: "Tue/Thu",
-    start_time: "12:30 PM",
-    end_time: "1:50 PM",
-    location: "Science 1, Room 220",
-    instructor: "Dr. Kevin Ramirez",
-  },
-  {
-    code: "CSE 150",
-    name: "Functional Programming",
-    quarter: "Fall 2025",
-    credits: 4,
-    description: "Principles of functional programming languages.",
-    prerequisites: "CSE 140",
-    meeting_days: "Mon/Wed",
-    start_time: "3:00 PM",
-    end_time: "4:50 PM",
-    location: "CSE 214",
-    instructor: "Dr. Laura Singh",
-  },
-  {
-    code: "ENGL 1A",
-    name: "Writing and Critical Thinking",
-    quarter: "Winter 2025",
-    credits: 4,
-    description: "Expository writing and analytical thinking.",
-    prerequisites: "None",
-    meeting_days: "Tue/Thu",
-    start_time: "1:00 PM",
-    end_time: "2:20 PM",
-    location: "Humanities 220",
-    instructor: "Prof. Martin Green",
-  },
-  {
-    code: "HIST 17B",
-    name: "California History",
-    quarter: "Spring 2025",
-    credits: 4,
-    description:
-      "Survey of California history from pre-contact to the present.",
-    prerequisites: "None",
-    meeting_days: "Mon/Wed",
-    start_time: "2:00 PM",
-    end_time: "3:50 PM",
-    location: "McHenry Library, Rm 105",
-    instructor: "Dr. Natalie Cho",
-  },
-  {
-    code: "BIOE 20A",
-    name: "Introduction to Biomedical Engineering",
-    quarter: "Summer 2025",
-    credits: 3,
-    description: "Fundamentals of biomedical engineering and design.",
-    prerequisites: "None",
-    meeting_days: "Mon/Wed/Fri",
-    start_time: "10:00 AM",
-    end_time: "10:50 AM",
-    location: "Baskin Engr 150",
-    instructor: "Dr. Oscar Nunez",
-  },
-  {
-    code: "PSYC 1",
-    name: "Introduction to Psychology",
-    quarter: "Fall 2025",
-    credits: 4,
-    description: "Basic concepts and methods in psychology.",
-    prerequisites: "None",
-    meeting_days: "Tue/Thu",
-    start_time: "9:00 AM",
-    end_time: "10:20 AM",
-    location: "Social Sciences 100",
-    instructor: "Prof. Patricia Lopez",
-  },
-  {
-    code: "ART 25A",
-    name: "Painting I",
-    quarter: "Winter 2025",
-    credits: 3,
-    description: "Fundamentals of painting with acrylics and oils.",
-    prerequisites: "None",
-    meeting_days: "Mon/Wed",
-    start_time: "6:00 PM",
-    end_time: "8:50 PM",
-    location: "Arts 3, Studio 2",
-    instructor: "Dr. Quincy Hall",
+    lectures: [
+      {
+        meeting_days: "Mon/Wed/Fri",
+        start_time: "9:00 AM",
+        end_time: "9:50 AM",
+        location: "Kresge 100",
+        instructor: "Dr. Carol Lee",
+        lab_sections: [],
+      },
+    ],
   },
 ];
