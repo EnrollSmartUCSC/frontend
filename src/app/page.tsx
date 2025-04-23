@@ -1,4 +1,4 @@
-import Image from "next/image";
+// import Image from "next/image";
 {
   /* no images yet, but will include logo soon */
 }

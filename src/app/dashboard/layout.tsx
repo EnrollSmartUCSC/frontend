@@ -1,14 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import React from "react";
+import { auth } from "../utils/firebase";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const router = useRouter();
+
+  const signOut = async () => {
+    auth.signOut().then(() => {
+      // Sign-out successful.
+      console.log("Sign-out successful.");
+      router.push("/login");
+    });
+  }
   return (
     <div className="min-h-screen flex">
       <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
@@ -45,7 +56,7 @@ export default function DashboardLayout({
 
           {/* Real Sign Out button */}
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => signOut()}
             className="mt-auto block text-center py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
           >
