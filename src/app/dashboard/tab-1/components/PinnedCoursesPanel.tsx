@@ -1,43 +1,41 @@
 import React from "react";
-import { CourseInfo } from "@/types/course";
+import { ClassData } from "@/types/api";
 
 interface Props {
-  pinned: CourseInfo[];
-  onSelect: (c: CourseInfo) => void;
-  selectedCourse: CourseInfo | null;
+  pinned: ClassData[];
+  selected: ClassData | null;
+  onSelect: (c: ClassData) => void;
 }
 
-export function PinnedCoursesPanel({
-  pinned,
-  onSelect,
-  selectedCourse,
-}: Props) {
+export function PinnedCoursesPanel({ pinned, selected, onSelect }: Props) {
   return (
     <div className="flex flex-col w-1/5 pr-4 h-full border-r-2 border-gray-500 mr-4">
       <h2 className="text-xl mb-4">Pinned Courses</h2>
       <div className="flex-1 overflow-y-auto border rounded p-2">
-        {pinned.length > 0 ? (
+        {pinned.length === 0 ? (
+          <p className="text-gray-500">No pinned courses.</p>
+        ) : (
           <ul className="space-y-2">
             {pinned.map((c) => {
-              const isSelected =
-                selectedCourse?.code === c.code &&
-                selectedCourse?.quarter === c.quarter;
+              const key = `${c.subject}:${c.catalog_nbr}`;
+              const selKey = selected
+                ? `${selected.subject}:${selected.catalog_nbr}`
+                : null;
+              const isSel = key === selKey;
               return (
                 <li
-                  key={c.code + c.quarter}
+                  key={key}
+                  onClick={() => onSelect(c)}
                   className={
                     `p-2 rounded cursor-pointer ` +
-                    (isSelected ? "bg-gray-200" : "hover:bg-gray-100")
+                    (isSel ? "bg-gray-200" : "hover:bg-gray-100")
                   }
-                  onClick={() => onSelect(c)}
                 >
-                  <span className="font-semibold">{c.code}</span> — {c.name}
+                  {c.subject} {c.catalog_nbr} — {c.title_lon}
                 </li>
               );
             })}
           </ul>
-        ) : (
-          <p className="text-gray-500">No pinned courses.</p>
         )}
       </div>
     </div>

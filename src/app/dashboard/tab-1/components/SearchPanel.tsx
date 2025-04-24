@@ -1,20 +1,20 @@
 import React from "react";
-import { CourseSummary } from "@/types/course";
+import { ClassData } from "@/types/api";
 
 interface Props {
   query: string;
   onQueryChange: (q: string) => void;
-  results: CourseSummary[];
-  onSelect: (s: CourseSummary) => void;
-  selectedCourse: CourseSummary | null;
+  results: ClassData[];
+  selected: ClassData | null;
+  onSelect: (c: ClassData) => void;
 }
 
 export function SearchPanel({
   query,
   onQueryChange,
   results,
+  selected,
   onSelect,
-  selectedCourse,
 }: Props) {
   return (
     <div className="flex flex-col w-1/4 pr-4 h-full">
@@ -23,31 +23,36 @@ export function SearchPanel({
         placeholder="Search for Classes"
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
-        className="mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-yellow-500"
+        className="mb-4 p-2 border rounded"
       />
       <div className="flex-1 overflow-y-auto border rounded p-2">
-        {results.length > 0 ? (
+        {results.length === 0 ? (
+          <p className="text-gray-500">No courses match.</p>
+        ) : (
           <ul className="space-y-2">
             {results.map((c) => {
-              const isSelected =
-                selectedCourse?.code === c.code &&
-                selectedCourse?.quarter === c.quarter;
+              const key = `${c.subject}:${c.catalog_nbr}`;
+              const selKey = selected
+                ? `${selected.subject}:${selected.catalog_nbr}`
+                : null;
+              const isSel = key === selKey;
               return (
                 <li
-                  key={c.code + c.quarter}
+                  key={key}
+                  onClick={() => onSelect(c)}
                   className={
                     `p-2 rounded cursor-pointer ` +
-                    (isSelected ? "bg-gray-200" : "hover:bg-gray-100")
+                    (isSel ? "bg-gray-200" : "hover:bg-gray-100")
                   }
-                  onClick={() => onSelect(c)}
                 >
-                  <span className="font-semibold">{c.code}</span> — {c.name}
+                  <span className="font-semibold">
+                    {c.subject} {c.catalog_nbr}
+                  </span>{" "}
+                  — {c.title_lon}
                 </li>
               );
             })}
           </ul>
-        ) : (
-          <p className="text-gray-500">No courses match your search.</p>
         )}
       </div>
     </div>

@@ -1,15 +1,20 @@
 "use client";
 
 import React from "react";
+import { useMockCourses } from "./tests/useMockCourses";
 import { useCourseSearch } from "./hooks/useCourseSearch";
+import { useCourseDetails } from "./hooks/useCourseDetails";
 import { usePinnedCourses } from "./hooks/usePinnedCourses";
-import { PinnedCoursesPanel } from "./components/PinnedCoursesPanel";
 import { SearchPanel } from "./components/SearchPanel";
+import { PinnedCoursesPanel } from "./components/PinnedCoursesPanel";
 import { CourseDetails } from "./components/CourseDetails";
+import { ClassData } from "@/types/api";
 
 export default function Tab1Page() {
-  const { query, setQuery, filtered, selectedCourse, handleSelect } =
-    useCourseSearch();
+  const sections = useMockCourses();
+  const { query, setQuery, filtered } = useCourseSearch(sections);
+  const [selected, setSelected] = React.useState<ClassData | null>(null);
+  const details = useCourseDetails(sections, selected);
   const { pinned, togglePin, isPinned } = usePinnedCourses();
 
   return (
@@ -21,22 +26,23 @@ export default function Tab1Page() {
       <main className="flex flex-1 p-4 overflow-hidden">
         <PinnedCoursesPanel
           pinned={pinned}
-          selectedCourse={selectedCourse}
-          onSelect={handleSelect}
+          selected={selected}
+          onSelect={setSelected}
         />
 
         <SearchPanel
           query={query}
           onQueryChange={setQuery}
           results={filtered}
-          selectedCourse={selectedCourse}
-          onSelect={handleSelect}
+          selected={selected}
+          onSelect={setSelected}
         />
 
         <CourseDetails
-          course={selectedCourse}
-          isPinned={isPinned(selectedCourse)}
-          onTogglePin={() => togglePin(selectedCourse)}
+          course={selected}
+          sections={details}
+          isPinned={isPinned(selected)}
+          onTogglePin={() => togglePin(selected)}
         />
       </main>
     </div>

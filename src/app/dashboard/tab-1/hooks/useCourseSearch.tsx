@@ -1,48 +1,28 @@
 import { useState, useEffect, useMemo } from "react";
-import { CourseSummary, CourseInfo } from "@/types/course";
-import { mockCourses } from "../mockCourses";
-import { filterCourses } from "../utils/formatting";
+import { ClassData } from "@/types/api";
 
-/* 
-    Locally filtering course searches. While *in* the course search tab, 
-    this shouldn't be computationally expensive since it's memoized
-
-    However, when switching tabs in the sidebar I'm pretty sure it'll free the cache.
-    In the future I'll look into keeping this tab mounted if we stick to the course prefetching approach
-    
-    Search patterns and criteria:
-    ~ Full code (CSE115A)
-    ~ Prefix (such as CSE) generates all CSE classes
-    ~ Suffix (such as 115A) generates all classes ending in 115A
-    ~ Course name (Introduction to Software Engineering) or substrings
-
-    Ignores:
-    ~ Case (cse115a === CSE115A)
-    ~ Whitespace (CSE115A === CSE 115A)
-  */
-
-export function useCourseSearch() {
+export function useCourseSearch(sections: ClassData[]) {
   const [query, setQuery] = useState("");
-  const [courses, setCourses] = useState<CourseSummary[]>([]);
-  const [selectedCourse, setSelectedCourse] = useState<CourseInfo | null>(null);
 
-  useEffect(() => {
-    setCourses(
-      mockCourses.map(({ code, name, quarter }) => ({ code, name, quarter }))
+  const uniqueCourses = useMemo(() => {
+    const map = new Map<string, ClassData>();
+    for (let s of sections) {
+      const key = `${s.subject}:${s.catalog_nbr}`;
+      if (!map.has(key)) map.set(key, s);
+    }
+    return Array.from(map.values());
+  }, [sections]);
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return uniqueCourses;
+    const q = query.trim().toLowerCase();
+    return uniqueCourses.filter(
+      (c) =>
+        c.subject.toLowerCase().includes(q) ||
+        c.catalog_nbr.toLowerCase().includes(q) ||
+        c.title.toLowerCase().includes(q)
     );
-  }, []);
+  }, [query, uniqueCourses]);
 
-  const filtered = useMemo(
-    () => (query.trim() ? filterCourses(courses, query) : courses),
-    [query, courses]
-  );
-
-  function handleSelect(summary: CourseSummary) {
-    const full = mockCourses.find(
-      (c) => c.code === summary.code && c.quarter === summary.quarter
-    )!;
-    setSelectedCourse(full);
-  }
-
-  return { query, setQuery, filtered, selectedCourse, handleSelect };
+  return { query, setQuery, filtered };
 }

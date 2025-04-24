@@ -1,27 +1,26 @@
 import { useState } from "react";
-import { CourseInfo } from "@/types/course";
+import { ClassData } from "@/types/api";
 
 export function usePinnedCourses() {
-  const [pinned, setPinned] = useState<CourseInfo[]>([]);
+  const [pinned, setPinned] = useState<ClassData[]>([]);
 
-  function togglePin(course: CourseInfo | null) {
+  function togglePin(course: ClassData | null) {
     if (!course) return;
+    const key = `${course.subject}:${course.catalog_nbr}`;
     setPinned((prev) => {
-      const exists = prev.some(
-        (c) => c.code === course.code && c.quarter === course.quarter
-      );
-      return exists
-        ? prev.filter(
-            (c) => !(c.code === course.code && c.quarter === course.quarter)
-          )
-        : [...prev, course];
+      if (prev.some((c) => `${c.subject}:${c.catalog_nbr}` === key)) {
+        return prev.filter((c) => `${c.subject}:${c.catalog_nbr}` !== key);
+      } else {
+        return [...prev, course];
+      }
     });
   }
 
-  function isPinned(course: CourseInfo | null) {
+  function isPinned(course: ClassData | null) {
     if (!course) return false;
     return pinned.some(
-      (c) => c.code === course.code && c.quarter === course.quarter
+      (c) =>
+        c.subject === course.subject && c.catalog_nbr === course.catalog_nbr
     );
   }
 

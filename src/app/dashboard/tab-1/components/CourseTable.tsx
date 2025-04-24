@@ -1,11 +1,11 @@
 import React from "react";
-import { CourseInfo } from "@/types/course";
+import { ClassData } from "@/types/api";
 
 interface Props {
-  course: CourseInfo;
+  sections: ClassData[];
 }
 
-export function CourseTable({ course }: Props) {
+export function CourseTable({ sections }: Props) {
   return (
     <table className="w-full table-auto border-collapse">
       <thead>
@@ -14,33 +14,25 @@ export function CourseTable({ course }: Props) {
           <th className="border px-2 py-1">Days</th>
           <th className="border px-2 py-1">Time</th>
           <th className="border px-2 py-1">Location</th>
-          <th className="border px-2 py-1">Instructor</th>
+          <th className="border px-2 py-1">Instructor(s)</th>
         </tr>
       </thead>
       <tbody>
-        {course.lectures.map((lec, i) => (
-          <React.Fragment key={i}>
-            <tr className="hover:bg-gray-50">
-              <td className="border px-2 py-1">Lecture</td>
-              <td className="border px-2 py-1">{lec.meeting_days}</td>
-              <td className="border px-2 py-1">
-                {lec.start_time}—{lec.end_time}
-              </td>
-              <td className="border px-2 py-1">{lec.location}</td>
-              <td className="border px-2 py-1">{lec.instructor}</td>
-            </tr>
-            {lec.lab_sections.map((lab, j) => (
-              <tr key={j} className="bg-gray-50 hover:bg-gray-100">
-                <td className="border px-2 py-1">Lab</td>
-                <td className="border px-2 py-1">{lab.meeting_days}</td>
-                <td className="border px-2 py-1">
-                  {lab.start_time}—{lab.end_time}
-                </td>
-                <td className="border px-2 py-1">{lab.location}</td>
-                <td className="border px-2 py-1">{lab.instructor}</td>
-              </tr>
-            ))}
-          </React.Fragment>
+        {sections.map((sec, i) => (
+          <tr
+            key={`${sec.subject}:${sec.catalog_nbr}:${sec.class_section}:${i}`}
+            className="hover:bg-gray-50"
+          >
+            <td className="border px-2 py-1">{sec.component}</td>
+            <td className="border px-2 py-1">{sec.meeting_days}</td>
+            <td className="border px-2 py-1">
+              {sec.start_time}—{sec.end_time}
+            </td>
+            <td className="border px-2 py-1">{sec.location}</td>
+            <td className="border px-2 py-1">
+              {sec.instructors.map((ins) => ins.name).join(", ")}
+            </td>
+          </tr>
         ))}
       </tbody>
     </table>

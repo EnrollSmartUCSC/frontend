@@ -1,33 +1,38 @@
 import React from "react";
-import { CourseInfo } from "@/types/course";
+import { ClassData } from "@/types/api";
 import { CourseTable } from "./CourseTable";
 
 interface Props {
-  course: CourseInfo | null;
+  course: ClassData | null;
+  sections: ClassData[];
   isPinned: boolean;
   onTogglePin: () => void;
 }
 
-export function CourseDetails({ course, isPinned, onTogglePin }: Props) {
-  if (!course) {
-    return <p className="text-gray-500">Select a course to view details.</p>;
-  }
+export function CourseDetails({
+  course,
+  sections,
+  isPinned,
+  onTogglePin,
+}: Props) {
+  if (!course) return <p className="text-gray-500">Select a course.</p>;
 
   return (
     <div className="flex-1 ml-4 border rounded p-4 flex flex-col overflow-auto">
       <div className="mb-4">
         <h2 className="text-2xl font-semibold">
-          {course.code}: {course.name} ({course.credits} Credits)
+          {course.subject} {course.catalog_nbr} — {course.title_lon}
         </h2>
+        <p className="mt-2">
+          <strong>Credits:</strong> {course.credits}
+        </p>
         <p className="mt-2">{course.description}</p>
         <p className="mt-2">
-          <strong>Prerequisites:</strong> {course.prerequisites || "None"}
+          <strong>Prerequisites:</strong> {course.prerequisites}
         </p>
       </div>
 
-      <h3 className="text-lg font-bold mb-2">Section Details</h3>
-      <p className="italic mb-2">Quarter: {course.quarter}</p>
-      <CourseTable course={course} />
+      <CourseTable sections={sections} />
 
       <div className="mt-auto">
         <button
