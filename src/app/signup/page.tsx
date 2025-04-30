@@ -1,7 +1,6 @@
 "use client";
 
 // import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../utils/firebase"; 
 import { useEffect } from "react";
@@ -12,6 +11,15 @@ export default function Signup() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+export default function Signup() {
+  const router = useRouter();
+
+  const handleEmailSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Signup placeholder");
+    // Send to backend
+  };
 
   const handleEmailSignup = () => {
     createUserWithEmailAndPassword(auth, email, password).then(async (res) => {
@@ -68,6 +76,7 @@ export default function Signup() {
       <h2 className="text-sm mb-4">or</h2>
 
       {/* Email Signup */}
+      <form className="flex flex-col gap-4 w-80" onSubmit={handleEmailSignup}>
         <input
           type="email"
           placeholder="Email"
@@ -85,7 +94,6 @@ export default function Signup() {
           value={password}
           required
         />
-        
         <button
           type="submit"
           className="px-4 py-2 text-white rounded
@@ -98,18 +106,28 @@ export default function Signup() {
         </button>
       <p className="mt-4">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-500 hover:underline">
+        <button
+          onClick={() => router.push("/login")}
+          className="text-blue-500 hover:cursor-pointer hover:underline"
+        >
           Log In Here
-        </Link>
+        </button>
       </p>
 
-      <Link href="/" className="absolute top-4 left-4">
-        &lt;- Back to Homepage
-      </Link>
 
-      <Link href="/dashboard" className="absolute top-4 right-4">
-        -&gt; Go to Dashboard
-      </Link>
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-4 left-4 hover:cursor-pointer"
+      >
+        &lt;- Back to Homepage (placeholder)
+      </button>
+
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="absolute top-4 right-4 hover:cursor-pointer"
+      >
+        -&gt; Go to dashboard (placeholder for testing)
+      </button>
     </div>
   );
 }

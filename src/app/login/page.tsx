@@ -22,6 +22,17 @@ export default function Login() {
     }).catch((error) => {
       console.error("Error signing in with email and password:", error);
     });
+
+export default function Login() {
+  const router = useRouter();
+
+  const handleEmailLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Login placeholder");
+  };
+
+  const handleGoogleLogin = () => {
+    console.log("Login Google Auth placeholder");
   };
 
   const signInWithGoogle = async () => {
@@ -68,6 +79,8 @@ export default function Login() {
       <h2 className="text-sm mb-4">or</h2>
 
       {/* Email Login */}
+      {/* Email Signup */}
+      <form className="flex flex-col gap-4 w-80" onSubmit={handleEmailLogin}>
         <input
           type="email"
           placeholder="Email"
@@ -85,7 +98,7 @@ export default function Login() {
           value={password}
           required
         />
-        
+
         <button
           className="px-4 py-2 text-white rounded
                      hover:bg-gray hover:cursor-pointer
@@ -97,6 +110,7 @@ export default function Login() {
         </button>
 
       <p className="mt-4">
+
         Don’t have an account?{" "}
         <Link href="/signup" className="text-blue-500 hover:underline">
           Sign Up Here
@@ -110,6 +124,28 @@ export default function Login() {
       <Link href="/dashboard" className="absolute top-4 right-4">
         -&gt; Go to Dashboard
       </Link>
+        Don't have an account?{" "}
+        <button
+          onClick={() => router.push("/signup")}
+          className="text-blue-500 hover:cursor-pointer hover:underline"
+        >
+          Sign up Here
+        </button>
+      </p>
+
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-4 left-4 hover:cursor-pointer"
+      >
+        &lt;- Back to Homepage (placeholder)
+      </button>
+
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="absolute top-4 right-4 hover:cursor-pointer"
+      >
+        -&gt; Go to dashboard (placeholder for testing)
+      </button>
     </div>
   );
 }

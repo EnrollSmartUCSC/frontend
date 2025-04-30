@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
 import { auth } from "../utils/firebase";
 import { useRouter } from "next/navigation";
@@ -20,20 +19,23 @@ export default function DashboardLayout({
       router.push("/login");
     });
   }
+  const router = useRouter();
+
+
   return (
     <div className="min-h-screen flex">
       <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
         <nav className="flex flex-col flex-1 gap-4">
-          <Link
-            href="/dashboard"
+          <button
+            onClick={() => router.push("/dashboard")}
             className="block text-3xl px-4 py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
           >
             EnrollSmart
-          </Link>
+          </button>
 
-          <Link
-            href="/dashboard/tab-1"
+          <button
+            onClick={() => router.push("/dashboard/tab-1")}
             className="block text-center py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
           >
@@ -41,22 +43,39 @@ export default function DashboardLayout({
           </Link>
           <Link
             href="/dashboard/tab-2"
+            Course Search
+          </button>
+
+          <button
+            onClick={() => router.push("/dashboard/tab-2")}
             className="block text-center py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
           >
+
             Tab2
           </Link>
           <Link
             href="/dashboard/tab-3"
+            Tab 2
+          </button>
+
+          <button
+            onClick={() => router.push("/dashboard/tab-3")}
             className="block text-center py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
           >
-            Tab3
-          </Link>
+            Tab 3
+          </button>
 
           {/* Real Sign Out button */}
           <button
             onClick={() => signOut()}
+            
+          <button
+            onClick={() => {
+              console.log("User signing out");
+              router.push("/");
+            }}
             className="mt-auto block text-center py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
           >
