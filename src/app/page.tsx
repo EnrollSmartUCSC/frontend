@@ -1,3 +1,7 @@
+// import Image from "next/image";
+{
+  /* no images yet, but will include logo soon */
+}
 "use client";
 
 import { useRouter } from "next/navigation";
