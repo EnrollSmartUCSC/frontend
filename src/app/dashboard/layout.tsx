@@ -19,8 +19,6 @@ export default function DashboardLayout({
       router.push("/login");
     });
   }
-  const router = useRouter();
-
 
   return (
     <div className="min-h-screen flex">
@@ -40,12 +38,7 @@ export default function DashboardLayout({
                        hover:cursor-pointer hover:bg-gray-300"
           >
             Tab1
-          </Link>
-          <Link
-            href="/dashboard/tab-2"
-            Course Search
           </button>
-
           <button
             onClick={() => router.push("/dashboard/tab-2")}
             className="block text-center py-2 rounded
@@ -53,12 +46,7 @@ export default function DashboardLayout({
           >
 
             Tab2
-          </Link>
-          <Link
-            href="/dashboard/tab-3"
-            Tab 2
           </button>
-
           <button
             onClick={() => router.push("/dashboard/tab-3")}
             className="block text-center py-2 rounded
@@ -67,14 +55,9 @@ export default function DashboardLayout({
             Tab 3
           </button>
 
-          {/* Real Sign Out button */}
-          <button
-            onClick={() => signOut()}
-            
           <button
             onClick={() => {
-              console.log("User signing out");
-              router.push("/");
+              signOut();
             }}
             className="mt-auto block text-center py-2 rounded
                        hover:cursor-pointer hover:bg-gray-300"
