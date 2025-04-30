@@ -3,7 +3,6 @@
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useEffect } from "react";
 import { useState } from "react";
 
@@ -12,7 +11,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  
 
   const handleEmailLogin = () => {
     signInWithEmailAndPassword(auth, email, password).then(async (res) => {
@@ -22,18 +21,7 @@ export default function Login() {
     }).catch((error) => {
       console.error("Error signing in with email and password:", error);
     });
-
-export default function Login() {
-  const router = useRouter();
-
-  const handleEmailLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login placeholder");
-  };
-
-  const handleGoogleLogin = () => {
-    console.log("Login Google Auth placeholder");
-  };
+  }
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
@@ -80,7 +68,6 @@ export default function Login() {
 
       {/* Email Login */}
       {/* Email Signup */}
-      <form className="flex flex-col gap-4 w-80" onSubmit={handleEmailLogin}>
         <input
           type="email"
           placeholder="Email"
@@ -110,21 +97,7 @@ export default function Login() {
         </button>
 
       <p className="mt-4">
-
-        Don’t have an account?{" "}
-        <Link href="/signup" className="text-blue-500 hover:underline">
-          Sign Up Here
-        </Link>
-      </p>
-
-      <Link href="/" className="absolute top-4 left-4">
-        &lt;- Back to Homepage
-      </Link>
-
-      <Link href="/dashboard" className="absolute top-4 right-4">
-        -&gt; Go to Dashboard
-      </Link>
-        Don't have an account?{" "}
+        Don&apost have an account?{" "}
         <button
           onClick={() => router.push("/signup")}
           className="text-blue-500 hover:cursor-pointer hover:underline"

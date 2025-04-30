@@ -12,21 +12,10 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-export default function Signup() {
-  const router = useRouter();
-
-  const handleEmailSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Signup placeholder");
-    // Send to backend
-  };
-
   const handleEmailSignup = () => {
     createUserWithEmailAndPassword(auth, email, password).then(async (res) => {
       if (res.user) {
         router.push("/login");
-      } else {
-        console.error("Error signing up with email and password:", res.error);
       }
     }).catch((error) => {
       console.error("Error signing up with email and password:", error);
@@ -76,7 +65,6 @@ export default function Signup() {
       <h2 className="text-sm mb-4">or</h2>
 
       {/* Email Signup */}
-      <form className="flex flex-col gap-4 w-80" onSubmit={handleEmailSignup}>
         <input
           type="email"
           placeholder="Email"
