@@ -1,4 +1,3 @@
-// src/app/dashboard/tab-2/components/CalendarView.tsx
 import React, { useMemo } from "react";
 import { ClassData } from "@/types/api";
 
@@ -22,20 +21,23 @@ const DAY_MAP: Record<string, string> = {
   Fri: "Friday",
 };
 
-export function CalendarView({ scheduled }: Props) {
+// 8AM to 9PM
+const START_TIME = 8;
+const END_TIME = 22;
+export function QuarterCourseSchedule({ scheduled }: Props) {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const hours = useMemo(() => Array.from({ length: 13 }, (_, i) => 8 + i), []); // 8am–8pm
-
-  const headerHeight = 40;
-  const hourHeight = 60;
+  const hours = useMemo(
+    () => Array.from({ length: END_TIME - START_TIME }, (_, i) => 8 + i),
+    []
+  );
 
   return (
     <div className="flex-1 overflow-auto">
       <div
         className="grid"
         style={{
-          gridTemplateColumns: `80px repeat(${days.length}, minmax(0,1fr))`,
-          gridTemplateRows: `40px repeat(${hours.length}, minmax(60px,auto))`,
+          gridTemplateColumns: `80px repeat(${days.length}, 1fr)`,
+          gridTemplateRows: `40px repeat(${hours.length}, 60px)`,
         }}
       >
         {/* Day headers */}
@@ -50,19 +52,23 @@ export function CalendarView({ scheduled }: Props) {
         ))}
 
         {/* Time labels */}
-        {hours.map((hr, i) => (
-          <div
-            key={hr}
-            className="border-b border-r relative z-10"
-            style={{ gridRow: i + 2, gridColumn: 1 }}
-          >
-            {hr < 12
+        {hours.map((hr, i) => {
+          const label =
+            hr < 12
               ? `${hr}:00 AM`
               : hr === 12
               ? `12:00 PM`
-              : `${hr - 12}:00 PM`}
-          </div>
-        ))}
+              : `${hr - 12}:00 PM`;
+          return (
+            <div
+              key={hr}
+              className="border-b border-r flex items-center justify-end pr-2 text-sm text-gray-600"
+              style={{ gridRow: i + 2, gridColumn: 1 }}
+            >
+              {label}
+            </div>
+          );
+        })}
 
         {/* Grid lines */}
         {days.map((_, c) =>
@@ -92,7 +98,7 @@ export function CalendarView({ scheduled }: Props) {
                 return (
                   <div
                     key={`${idx}-${abbr}`}
-                    className="bg-blue-200 rounded p-1 text-xs overflow-hidden"
+                    className="bg-blue-200 rounded-md p-2 text-xs shadow overflow-hidden"
                     style={{
                       gridColumnStart: col,
                       gridColumnEnd: col + 1,
@@ -101,10 +107,11 @@ export function CalendarView({ scheduled }: Props) {
                     }}
                   >
                     <div className="font-semibold truncate">
-                      {course.subject} {course.catalog_nbr}
+                      {course.subject} {course.catalog_nbr} — {course.title}
                     </div>
-                    <div className="truncate">
-                      {course.component} ({course.class_section})
+                    <div className="text-[10px] text-gray-700">
+                      {course.meeting_days} {course.start_time}–
+                      {course.end_time}
                     </div>
                   </div>
                 );
