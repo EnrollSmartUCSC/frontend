@@ -85,8 +85,8 @@ export function QuarterCourseSchedule({ scheduled }: Props) {
         {scheduled.map((course, idx) => {
           const start = parseHour(course.start_time);
           const end = parseHour(course.end_time);
-          const rowStart = Math.floor(start - 8) + 2;
-          const rowEnd = Math.ceil(end - 8) + 2;
+          const rowStart = Math.floor(start - 8) + 1;
+          const rowEnd = Math.ceil(end - 8) + 1;
 
           return (
             <React.Fragment key={idx}>
