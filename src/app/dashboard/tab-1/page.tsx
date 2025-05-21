@@ -1,45 +1,49 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useMockCourses } from "./tests/useMockCourses";
+import { useCourseSearch } from "./hooks/useCourseSearch";
+import { useCourseDetails } from "./hooks/useCourseDetails";
+import { usePinnedCourses } from "./hooks/usePinnedCourses";
+import { SearchPanel } from "./components/SearchPanel";
+import { PinnedCoursesPanel } from "./components/PinnedCoursesPanel";
+import { CourseDetails } from "./components/CourseDetails";
+import { ClassData } from "@/types/api";
 
-export default function Tab1() {
-  const [query, setQuery] = useState("");
-
-  // Placeholder for class search query
-  // Prints to the console since we don't have backend yet
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (query) console.log("Search query:", query);
-    }, 250);
-    return () => clearTimeout(handler);
-  }, [query]);
+export default function Tab1Page() {
+  const sections = useMockCourses();
+  const { query, setQuery, filtered } = useCourseSearch(sections);
+  const [selected, setSelected] = React.useState<ClassData | null>(null);
+  const details = useCourseDetails(sections, selected);
+  const { pinned, togglePin, isPinned } = usePinnedCourses();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <header className="px-4 py-2 border-b">
         <h1 className="text-2xl font-bold">Course Search</h1>
       </header>
 
-      {/* Left Panel (Class Search and Info) */}
-      <main className="flex flex-1 p-4">
-        <div className="flex flex-col justify-between w-1/4 pr-4">
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Search for Classes"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full p-2 text-center border border-gray-300 rounded
-                focus:outline-none focus:ring-1 focus:ring-yellow-500"
-            />
-          </div>
+      <main className="flex flex-1 p-4 overflow-hidden">
+        <PinnedCoursesPanel
+          pinned={pinned}
+          selected={selected}
+          onSelect={setSelected}
+        />
 
-          <div className="text-gray-700">
-            Basic proof of concept for course search. Currently debounces to
-            console.log on typing something in the search box (Right Click
-            -&gt;Inspect -&gt; Console)
-          </div>
-        </div>
+        <SearchPanel
+          query={query}
+          onQueryChange={setQuery}
+          results={filtered}
+          selected={selected}
+          onSelect={setSelected}
+        />
+
+        <CourseDetails
+          course={selected}
+          sections={details}
+          isPinned={isPinned(selected)}
+          onTogglePin={() => togglePin(selected)}
+        />
       </main>
     </div>
   );
