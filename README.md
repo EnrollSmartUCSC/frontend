@@ -18,6 +18,37 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+Build the OAuth 2.0 Client locally through the Google Cloud Console to ensure that the web page can run normally locally.
+
+Create a file at the root of your project called .env.local
+
+Example of .env.local:
+
+```bash
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET= <a-base64-secret>
+GOOGLE_CLIENT_ID= <your-google-client-id>
+GOOGLE_CLIENT_SECRET= <your-google-client-secret>
+```
+
+
+If you want to Run locally, you need to create a OAuth 2.0 Client on Google Cloud console
+
+This file shoud named <.env.local>
+
+Here are some pieces of information that you might use: 
+
+```bash
+Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
+Authorized JavaScript origins: http://localhost:3000
+
+Generate a Base64 secret in PowerShell directly by using:
+$bytes = [byte[]]::new(32)
+[System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+[Convert]::ToBase64String($bytes)
+
+```
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
