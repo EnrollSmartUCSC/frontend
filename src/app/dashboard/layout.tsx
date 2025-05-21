@@ -43,6 +43,7 @@ export default function DashboardLayout({
   }
 
   return (
+    <>
     <ScheduleProvider>
       <div className="min-h-screen flex">
         <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
@@ -143,5 +144,6 @@ export default function DashboardLayout({
 
       <main className="flex-1 p-8">{children}</main>
     </div>
+    </>
   );
 }

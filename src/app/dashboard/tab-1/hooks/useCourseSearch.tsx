@@ -20,7 +20,9 @@ export function useCourseSearch(sections: ClassData[]) {
       (c) =>
         c.subject.toLowerCase().includes(q) ||
         c.catalog_nbr.toLowerCase().includes(q) ||
-        c.title.toLowerCase().includes(q)
+        c.title.toLowerCase().includes(q) ||
+        (c.subject.toLowerCase() + c.catalog_nbr.toLowerCase()).includes(q) ||
+        (c.catalog_nbr.toLowerCase() + " " + c.subject.toLowerCase()).includes(q)
     );
   }, [query, uniqueCourses]);
 
