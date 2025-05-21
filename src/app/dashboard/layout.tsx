@@ -43,7 +43,6 @@ export default function DashboardLayout({
   }
 
   return (
-    <>
     <ScheduleProvider>
       <div className="min-h-screen flex">
         <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
@@ -82,8 +81,7 @@ export default function DashboardLayout({
 
             <button
               onClick={() => {
-                console.log("User signing out");
-                router.push("/");
+              signOut();
               }}
               className="mt-auto block text-center py-2 rounded
               hover:cursor-pointer hover:bg-gray-300"
@@ -96,54 +94,6 @@ export default function DashboardLayout({
         <main className="flex-1 p8">{children}</main>
       </div>
     </ScheduleProvider>
-    <div className="min-h-screen flex">
-      <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
-        <nav className="flex flex-col flex-1 gap-4">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="block text-3xl px-4 py-2 rounded
-                       hover:cursor-pointer hover:bg-gray-300"
-          >
-            EnrollSmart
-          </button>
-
-          <button
-            onClick={() => router.push("/dashboard/tab-1")}
-            className="block text-center py-2 rounded
-                       hover:cursor-pointer hover:bg-gray-300"
-          >
-            Tab1
-          </button>
-          <button
-            onClick={() => router.push("/dashboard/tab-2")}
-            className="block text-center py-2 rounded
-                       hover:cursor-pointer hover:bg-gray-300"
-          >
-
-            Tab2
-          </button>
-          <button
-            onClick={() => router.push("/dashboard/tab-3")}
-            className="block text-center py-2 rounded
-                       hover:cursor-pointer hover:bg-gray-300"
-          >
-            Tab 3
-          </button>
-
-          <button
-            onClick={() => {
-              signOut();
-            }}
-            className="mt-auto block text-center py-2 rounded
-                       hover:cursor-pointer hover:bg-gray-300"
-          >
-            Sign Out
-          </button>
-        </nav>
-      </aside>
-
-      <main className="flex-1 p-8">{children}</main>
-    </div>
-    </>
+    
   );
 }
