@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { auth } from "../utils/firebase";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +11,27 @@ export default function DashboardLayout({
 }) {
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (!auth.currentUser) {
+      // User is not signed in, redirect to login page
+      router.push("/login");
+    } else {
+      // User is signed in, you can access user information here
+      const user = auth.currentUser;
+      user?.getIdToken().then(async (token) => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/google-signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      })
+
+      console.log("User is signed in:", user);
+    }
+  }, [router]);
 
   const signOut = async () => {
     auth.signOut().then(() => {

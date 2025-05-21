@@ -1,7 +1,7 @@
 "use client";
 
 // import { signIn } from "next-auth/react";
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { auth } from "../utils/firebase"; 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -13,13 +13,28 @@ export default function Signup() {
   const [password, setPassword] = useState("");
 
   const handleEmailSignup = () => {
-    createUserWithEmailAndPassword(auth, email, password).then(async (res) => {
-      if (res.user) {
-        router.push("/login");
-      }
-    }).catch((error) => {
-      console.error("Error signing up with email and password:", error);
-    });
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          router.push("/dashboard");
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("An error occurred. Please try again.");
+    })
   };
 
   const signInWithGoogle = async () => {
