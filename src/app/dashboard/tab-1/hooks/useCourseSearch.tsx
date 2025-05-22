@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { ClassData } from "@/types/api";
 
 export function useCourseSearch(sections: ClassData[]) {
@@ -6,12 +6,13 @@ export function useCourseSearch(sections: ClassData[]) {
 
   const uniqueCourses = useMemo(() => {
     const map = new Map<string, ClassData>();
-    for (let s of sections) {
+    for (const s of sections) {
       const key = `${s.subject}:${s.catalog_nbr}`;
       if (!map.has(key)) map.set(key, s);
     }
     return Array.from(map.values());
   }, [sections]);
+
 
   const filtered = useMemo(() => {
     if (!query.trim()) return uniqueCourses;

@@ -33,6 +33,14 @@ export interface ApiError {
   message: string;
 }
 
+
+export interface CourseDetailsProps {
+  catalog_nbr: string;
+  prerequisites: string;
+  description: string;
+  credits: string;
+}
+
 // export interface TrackClassItem {
 //   subject: string;
 //   class_nbr: string;

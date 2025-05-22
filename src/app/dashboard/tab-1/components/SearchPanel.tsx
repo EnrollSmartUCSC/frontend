@@ -48,7 +48,7 @@ export function SearchPanel({
                   <span className="font-semibold">
                     {c.subject} {c.catalog_nbr}
                   </span>{" "}
-                  — {c.title_lon}
+                  — {c.title}
                 </li>
               );
             })}

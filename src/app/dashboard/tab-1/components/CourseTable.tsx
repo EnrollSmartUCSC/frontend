@@ -19,6 +19,7 @@ export function CourseTable({ sections }: Props) {
       </thead>
       <tbody>
         {sections.map((sec, i) => (
+          console.log(sec),
           <tr
             key={`${sec.subject}:${sec.catalog_nbr}:${sec.class_section}:${i}`}
             className="hover:bg-gray-50"

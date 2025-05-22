@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { useMockCourses } from "./tests/useMockCourses";
+import { useCourses } from "./hooks/useCourses";
+// import { useMockCourses } from "./tests/useMockCourses";
 import { useCourseSearch } from "./hooks/useCourseSearch";
 import { useCourseDetails } from "./hooks/useCourseDetails";
 import { usePinnedCourses } from "./hooks/usePinnedCourses";
@@ -11,11 +12,21 @@ import { CourseDetails } from "./components/CourseDetails";
 import { ClassData } from "@/types/api";
 
 export default function Tab1Page() {
-  const sections = useMockCourses();
+  const sections = useCourses();
   const { query, setQuery, filtered } = useCourseSearch(sections);
   const [selected, setSelected] = React.useState<ClassData | null>(null);
-  const details = useCourseDetails(sections, selected);
+  const [details, setDetails] = React.useState<ClassData[]>([]);
+  const [quarter] = React.useState("2025 Fall Quarter");
   const { pinned, togglePin, isPinned } = usePinnedCourses();
+
+  React.useEffect(() => {
+    async function fetchDetails() {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      setDetails(await useCourseDetails(selected, quarter));
+    }
+
+    fetchDetails();
+  }, [selected, quarter]);
 
   return (
     <div className="flex flex-col h-screen">
