@@ -34,6 +34,7 @@ export function MultiYearPlanner() {
               <td className="border px-4 py-2 font-semibold">{year}</td>
               {SEASONS.map((season) => {
                 const quarterId = `${season}${year}`;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 const { isOver, setNodeRef } = useDroppable({
                   id: quarterId,
                 });

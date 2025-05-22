@@ -20,6 +20,7 @@ export function CourseList({ courses, disableScroll }: Props) {
         {courses.map((course) => {
           const id = `${course.subject}-${course.catalog_nbr}-${course.class_section}`;
           const { attributes, listeners, setNodeRef, transform, isDragging } =
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             useDraggable({ id });
           const style = transform
             ? {

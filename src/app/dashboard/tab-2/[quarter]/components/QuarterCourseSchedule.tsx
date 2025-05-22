@@ -7,6 +7,7 @@ interface Props {
 
 function parseHour(time: string): number {
   const [hms, meridiem] = time.split(" ");
+  // eslint-disable-next-line prefer-const
   let [h, m] = hms.split(":").map(Number);
   if (meridiem === "PM" && h < 12) h += 12;
   if (meridiem === "AM" && h === 12) h = 0;
