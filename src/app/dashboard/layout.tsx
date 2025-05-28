@@ -10,7 +10,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   const router = useRouter();
 
   useEffect(() => {
@@ -21,14 +20,17 @@ export default function DashboardLayout({
       // User is signed in, you can access user information here
       const user = auth.currentUser;
       user?.getIdToken().then(async (token) => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/google-signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    })
-      })
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/google-signin`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      });
 
       console.log("User is signed in:", user);
     }
@@ -40,17 +42,18 @@ export default function DashboardLayout({
       console.log("Sign-out successful.");
       router.push("/login");
     });
-  }
+  };
 
   return (
     <ScheduleProvider>
-      <div className="min-h-screen flex">
-        <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
+      <div className="min-h-screen flex font-jetbrains">
+        <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col relative font-mono">
           <nav className="flex flex-col flex-1 gap-4">
             <button
               onClick={() => router.push("/dashboard")}
               className="block text-3xl px-4 py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+              hover:cursor-pointer hover:bg-gray-300
+              text-[#0D60AD] font-semibold font-sans"
             >
               EnrollSmart
             </button>
@@ -81,7 +84,7 @@ export default function DashboardLayout({
 
             <button
               onClick={() => {
-              signOut();
+                signOut();
               }}
               className="mt-auto block text-center py-2 rounded
               hover:cursor-pointer hover:bg-gray-300"
@@ -94,6 +97,5 @@ export default function DashboardLayout({
         <main className="flex-1 p8">{children}</main>
       </div>
     </ScheduleProvider>
-    
   );
 }

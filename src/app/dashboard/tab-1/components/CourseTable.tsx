@@ -7,8 +7,8 @@ interface Props {
 
 export function CourseTable({ sections }: Props) {
   return (
-    <table className="w-full table-auto border-collapse">
-      <thead>
+    <table className="w-full table-auto border-collapse text-[#777777]">
+      <thead className="bg-[#EFFCFF]">
         <tr>
           <th className="border px-2 py-1">Type</th>
           <th className="border px-2 py-1">Days</th>
@@ -18,23 +18,27 @@ export function CourseTable({ sections }: Props) {
         </tr>
       </thead>
       <tbody>
-        {sections.map((sec, i) => (
-          console.log(sec),
-          <tr
-            key={`${sec.subject}:${sec.catalog_nbr}:${sec.class_section}:${i}`}
-            className="hover:bg-gray-50"
-          >
-            <td className="border px-2 py-1">{sec.component}</td>
-            <td className="border px-2 py-1">{sec.meeting_days}</td>
-            <td className="border px-2 py-1">
-              {sec.start_time}—{sec.end_time}
-            </td>
-            <td className="border px-2 py-1">{sec.location}</td>
-            <td className="border px-2 py-1">
-              {sec.instructors.map((ins) => ins.name).join(", ")}
-            </td>
-          </tr>
-        ))}
+        {sections.map(
+          (sec, i) => (
+            console.log(sec),
+            (
+              <tr
+                key={`${sec.subject}:${sec.catalog_nbr}:${sec.class_section}:${i}`}
+                className="hover:bg-gray-50"
+              >
+                <td className="border px-2 py-1">{sec.component}</td>
+                <td className="border px-2 py-1">{sec.meeting_days}</td>
+                <td className="border px-2 py-1">
+                  {sec.start_time}—{sec.end_time}
+                </td>
+                <td className="border px-2 py-1">{sec.location}</td>
+                <td className="border px-2 py-1">
+                  {sec.instructors.map((ins) => ins.name).join(", ")}
+                </td>
+              </tr>
+            )
+          )
+        )}
       </tbody>
     </table>
   );

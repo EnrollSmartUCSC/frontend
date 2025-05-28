@@ -11,7 +11,7 @@ import { CourseDetails } from "./components/CourseDetails";
 import { ClassData } from "@/types/api";
 
 export default function Tab1Page() {
-  const { sections, loading, error } = useCourses(); // Updated to use the new return structure
+  const { sections, loading, error } = useCourses();
   const { query, setQuery, filtered } = useCourseSearch(sections);
   const [selected, setSelected] = React.useState<ClassData | null>(null);
   const [quarter] = React.useState("2025 Fall Quarter");
