@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useCourses } from "./hooks/useCourses";
-// import { useMockCourses } from "./tests/useMockCourses";
 import { useCourseSearch } from "./hooks/useCourseSearch";
 import { useCourseDetails } from "./hooks/useCourseDetails";
 import { usePinnedCourses } from "./hooks/usePinnedCourses";
@@ -12,21 +11,25 @@ import { CourseDetails } from "./components/CourseDetails";
 import { ClassData } from "@/types/api";
 
 export default function Tab1Page() {
-  const sections = useCourses();
+  const { sections, loading, error } = useCourses(); // Updated to use the new return structure
   const { query, setQuery, filtered } = useCourseSearch(sections);
   const [selected, setSelected] = React.useState<ClassData | null>(null);
-  const [details, setDetails] = React.useState<ClassData[]>([]);
   const [quarter] = React.useState("2025 Fall Quarter");
   const { pinned, togglePin, isPinned } = usePinnedCourses();
 
-  React.useEffect(() => {
-    async function fetchDetails() {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      setDetails(await useCourseDetails(selected, quarter));
-    }
+  const {
+    details,
+    loading: detailsLoading,
+    error: detailsError,
+  } = useCourseDetails(selected, quarter);
 
-    fetchDetails();
-  }, [selected, quarter]);
+  if (loading) {
+    return <div>Loading courses...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading courses: {error}</div>;
+  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -54,6 +57,8 @@ export default function Tab1Page() {
           sections={details}
           isPinned={isPinned(selected)}
           onTogglePin={() => togglePin(selected)}
+          loading={loading}
+          error={error}
         />
       </main>
     </div>

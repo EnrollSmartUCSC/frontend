@@ -1,33 +1,44 @@
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { ClassData } from "@/types/api";
 
-export function useCourseDetails(
-  selected: ClassData | null,
-  quarter: string
-) {
-  const details = useMemo(async () => {
-    if (!selected) return [];
-    // return sections.filter(
-    //   (s) =>
-    //     s.subject === selected.subject && s.catalog_nbr === selected.catalog_nbr
-    // );
+export function useCourseDetails(selected: ClassData | null, quarter: string) {
+  const [details, setDetails] = useState<ClassData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const selectedSubject = selected.subject;
-    const selectedCatalogNbr = selected.catalog_nbr;
+  useEffect(() => {
+    async function fetchDetails() {
+      if (!selected) {
+        setDetails([]);
+        return;
+      }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/classData?quarter=${quarter}&subject=${selectedSubject}&class=${selectedCatalogNbr}`
-    );
+      setLoading(true);
+      setError(null);
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+      try {
+        const selectedSubject = selected.subject;
+        const selectedCatalogNbr = selected.catalog_nbr;
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/classData?quarter=${quarter}&subject=${selectedSubject}&class=${selectedCatalogNbr}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setDetails(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setDetails([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    const data = await response.json();
 
-
-    return data;
-    
+    fetchDetails();
   }, [selected, quarter]);
 
-  return details;
+  return { details, loading, error };
 }

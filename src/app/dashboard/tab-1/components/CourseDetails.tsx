@@ -4,34 +4,38 @@ import React from "react";
 import { ClassData } from "@/types/api";
 import { CourseTable } from "./CourseTable";
 import { CourseDetailsProps } from "@/types/api";
-import { useCourseInfo } from "../hooks/useCourseInfo";
+import { fetchCourseInfo } from "../hooks/fetchCourseInfo";
 
 interface Props {
   course: ClassData | null;
   sections: ClassData[];
   isPinned: boolean;
   onTogglePin: () => void;
+  loading?: boolean;
+  error?: string | null;
 }
-
-
-
 
 export function CourseDetails({
   course,
   sections,
   isPinned,
   onTogglePin,
+  loading = false,
+  error = null,
 }: Props) {
   if (!course) return <p className="text-gray-500">Select a course.</p>;
-  const [courseInfo, setCourseInfo] = React.useState<CourseDetailsProps | null>(null);
+  const [courseInfo, setCourseInfo] = React.useState<CourseDetailsProps | null>(
+    null
+  );
 
   React.useEffect(() => {
     async function fetchCourseDetails() {
       if (!course) return;
-      const data = await useCourseInfo({
+      const data = await fetchCourseInfo({
         title: course.title,
         catalog_nbr: course.catalog_nbr,
-        subject: course.subject,});
+        subject: course.subject,
+      });
       setCourseInfo(data);
     }
 
