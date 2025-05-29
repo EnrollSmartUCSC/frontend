@@ -51,15 +51,15 @@ export function MultiYearPlanner() {
                     <div className="space-y-2 mb-12">
                       {courses.map((c) => (
                         <div
-                          key={`${c.subject}-${c.catalog_nbr}-${c.class_section}`}
+                          key={`${c.subject}-${c.catalog_nbr}-${c.title}`}
                           className="bg-blue-100 rounded-md p-2 text-xs shadow-sm"
                         >
                           <div className="font-semibold truncate">
                             {c.subject} {c.catalog_nbr} — {c.title}
                           </div>
-                          <div className="text-[10px] text-gray-700 truncate">
+                          {/* <div className="text-[10px] text-gray-700 truncate">
                             {c.meeting_days} {c.start_time}–{c.end_time}
-                          </div>
+                          </div> */}
                         </div>
                       ))}
                     </div>

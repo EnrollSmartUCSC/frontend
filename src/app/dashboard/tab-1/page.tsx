@@ -4,7 +4,7 @@ import React from "react";
 import { useCourses } from "./hooks/useCourses";
 // import { useMockCourses } from "./tests/useMockCourses";
 import { useCourseSearch } from "./hooks/useCourseSearch";
-import { useCourseDetails } from "./hooks/useCourseDetails";
+import { fetchCourseDetails } from "./hooks/useCourseDetails";
 import { usePinnedCourses } from "./hooks/usePinnedCourses";
 import { SearchPanel } from "./components/SearchPanel";
 import { PinnedCoursesPanel } from "./components/PinnedCoursesPanel";
@@ -12,19 +12,34 @@ import { CourseDetails } from "./components/CourseDetails";
 import { ClassData } from "@/types/api";
 
 export default function Tab1Page() {
-  const sections = useCourses();
+  const { fetchCourses } = useCourses();
+  const [sections, setSections] = React.useState<ClassData[]>([]);
   const { query, setQuery, filtered } = useCourseSearch(sections);
   const [selected, setSelected] = React.useState<ClassData | null>(null);
   const [details, setDetails] = React.useState<ClassData[]>([]);
   const [quarter] = React.useState("2025 Fall Quarter");
-  const { pinned, togglePin, isPinned } = usePinnedCourses();
+  const [pinned, setPinned] = React.useState<ClassData[]>([]);
+  const { fetchPinnedCourses } = usePinnedCourses();
 
   React.useEffect(() => {
     async function fetchDetails() {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      setDetails(await useCourseDetails(selected, quarter));
+      setDetails(await fetchCourseDetails(selected, quarter));
     }
 
+    async function getPinned() {
+      setPinned(await fetchPinnedCourses());
+    }
+    async function courses() {
+      const c = await fetchCourses();
+      setSections(c);
+    }
+
+    // async function checkPinned() {
+    //     const pinnedStatus = await isPinned(selected);
+    //     setPin(pinnedStatus);
+    // }
+    courses();
+    getPinned();
     fetchDetails();
   }, [selected, quarter]);
 
@@ -52,8 +67,12 @@ export default function Tab1Page() {
         <CourseDetails
           course={selected}
           sections={details}
-          isPinned={isPinned(selected)}
-          onTogglePin={() => togglePin(selected)}
+          // isPinned={pin}
+          onTogglePin={async () => {
+            const updated = await fetchPinnedCourses();
+            setPinned(updated);
+          }}
+          // quarter={quarter}
         />
       </main>
     </div>

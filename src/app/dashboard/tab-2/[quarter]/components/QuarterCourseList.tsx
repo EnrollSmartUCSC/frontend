@@ -1,8 +1,8 @@
 import React from "react";
-import { ClassData } from "@/types/api";
+import { className } from "@/types/api";
 
 interface Props {
-  courses: ClassData[];
+  courses: className[];
 }
 
 export function QuarterCourseList({ courses }: Props) {
@@ -12,7 +12,7 @@ export function QuarterCourseList({ courses }: Props) {
       <ul className="space-y-2">
         {courses.length > 0 ? (
           courses.map((course) => {
-            const key = `${course.subject}-${course.catalog_nbr}-${course.class_section}`;
+            const key = `${course.subject}-${course.catalog_nbr}-${course.title}`;
             return (
               <li
                 key={key}

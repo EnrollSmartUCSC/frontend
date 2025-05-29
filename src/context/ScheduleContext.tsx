@@ -1,10 +1,10 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { ClassData } from "@/types/api";
+import { className } from "@/types/api";
 
 interface ScheduleContextType {
-  scheduledByQuarter: Record<string, ClassData[]>;
-  addCourse: (quarterId: string, course: ClassData) => void;
+  scheduledByQuarter: Record<string, className[]>;
+  addCourse: (quarterId: string, course: className) => void;
 }
 
 const ScheduleContext = createContext<ScheduleContextType | undefined>(
@@ -13,16 +13,16 @@ const ScheduleContext = createContext<ScheduleContextType | undefined>(
 
 export function ScheduleProvider({ children }: { children: ReactNode }) {
   const [scheduledByQuarter, setScheduledByQuarter] = useState<
-    Record<string, ClassData[]>
+    Record<string, className[]>
   >({});
 
-  function addCourse(quarterId: string, course: ClassData) {
+  function addCourse(quarterId: string, course: className) {
     setScheduledByQuarter((prev) => {
       const list = prev[quarterId] || [];
-      const key = `${course.subject}:${course.catalog_nbr}:${course.class_section}`;
+      const key = `${course.subject}:${course.catalog_nbr}:${course.title}`;
       if (
         list.some(
-          (c) => `${c.subject}:${c.catalog_nbr}:${c.class_section}` === key
+          (c) => `${c.subject}:${c.catalog_nbr}:${c.title}` === key
         )
       ) {
         return prev;

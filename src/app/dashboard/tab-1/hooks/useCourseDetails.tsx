@@ -1,11 +1,9 @@
-import { useMemo } from "react";
 import { ClassData } from "@/types/api";
 
-export function useCourseDetails(
+export async function fetchCourseDetails(
   selected: ClassData | null,
   quarter: string
 ) {
-  const details = useMemo(async () => {
     if (!selected) return [];
     // return sections.filter(
     //   (s) =>
@@ -24,10 +22,5 @@ export function useCourseDetails(
     }
     const data = await response.json();
 
-
     return data;
-    
-  }, [selected, quarter]);
-
-  return details;
 }

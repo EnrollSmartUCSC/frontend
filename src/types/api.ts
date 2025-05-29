@@ -1,4 +1,10 @@
 // ClassData schema returned by GET /classData
+
+export interface className {
+  subject: string;
+  catalog_nbr: string;
+  title: string;
+}
 export interface ClassData {
   catalog_nbr: string;
   class_nbr: string;

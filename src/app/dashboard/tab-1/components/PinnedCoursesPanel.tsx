@@ -31,7 +31,7 @@ export function PinnedCoursesPanel({ pinned, selected, onSelect }: Props) {
                     (isSel ? "bg-gray-200" : "hover:bg-gray-100")
                   }
                 >
-                  {c.subject} {c.catalog_nbr} — {c.title_lon}
+                  {c.subject} {c.catalog_nbr} — {c.title}
                 </li>
               );
             })}

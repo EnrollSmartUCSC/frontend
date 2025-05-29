@@ -1,26 +1,26 @@
 import React, { useMemo } from "react";
-import { ClassData } from "@/types/api";
+import { className } from "@/types/api";
 
 interface Props {
-  scheduled: ClassData[];
+  scheduled: className[];
 }
 
-function parseHour(time: string): number {
-  const [hms, meridiem] = time.split(" ");
-  // eslint-disable-next-line prefer-const
-  let [h, m] = hms.split(":").map(Number);
-  if (meridiem === "PM" && h < 12) h += 12;
-  if (meridiem === "AM" && h === 12) h = 0;
-  return h + m / 60;
-}
+// function parseHour(time: string): number {
+//   const [hms, meridiem] = time.split(" ");
+//   // eslint-disable-next-line prefer-const
+//   let [h, m] = hms.split(":").map(Number);
+//   if (meridiem === "PM" && h < 12) h += 12;
+//   if (meridiem === "AM" && h === 12) h = 0;
+//   return h + m / 60;
+// }
 
-const DAY_MAP: Record<string, string> = {
-  Mon: "Monday",
-  Tue: "Tuesday",
-  Wed: "Wednesday",
-  Thu: "Thursday",
-  Fri: "Friday",
-};
+// const DAY_MAP: Record<string, string> = {
+//   Mon: "Monday",
+//   Tue: "Tuesday",
+//   Wed: "Wednesday",
+//   Thu: "Thursday",
+//   Fri: "Friday",
+// };
 
 // 8AM to 9PM
 const START_TIME = 8;
@@ -84,39 +84,33 @@ export function QuarterCourseSchedule({ scheduled }: Props) {
 
         {/* Course blocks */}
         {scheduled.map((course, idx) => {
-          const start = parseHour(course.start_time);
-          const end = parseHour(course.end_time);
-          const rowStart = Math.floor(start - 8) + 1;
-          const rowEnd = Math.ceil(end - 8) + 1;
+          // const start = parseHour(course.start_time);
+          // const end = parseHour(course.end_time);
+          // const rowStart = Math.floor(start - 8) + 1;
+          // const rowEnd = Math.ceil(end - 8) + 1;
 
           return (
             <React.Fragment key={idx}>
-              {course.meeting_days.split("/").map((abbr) => {
-                const day = DAY_MAP[abbr];
-                const col = days.indexOf(day) + 2;
-                if (col < 2) return null;
-
-                return (
+              {(
                   <div
-                    key={`${idx}-${abbr}`}
+                    key={`${course.subject}-${course.catalog_nbr}-${course.title}`}
                     className="bg-blue-200 rounded-md p-2 text-xs shadow overflow-hidden"
                     style={{
-                      gridColumnStart: col,
-                      gridColumnEnd: col + 1,
-                      gridRowStart: rowStart,
-                      gridRowEnd: rowEnd,
+                      // gridColumnStart: col,
+                      // gridColumnEnd: col + 1,
+                      // gridRowStart: rowStart,
+                      // gridRowEnd: rowEnd,
                     }}
                   >
                     <div className="font-semibold truncate">
                       {course.subject} {course.catalog_nbr} — {course.title}
                     </div>
-                    <div className="text-[10px] text-gray-700">
+                    {/* <div className="text-[10px] text-gray-700">
                       {course.meeting_days} {course.start_time}–
                       {course.end_time}
-                    </div>
+                    </div> */}
                   </div>
-                );
-              })}
+                )}
             </React.Fragment>
           );
         })}

@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useSchedule } from "@/context/ScheduleContext";
 import { QuarterCourseList } from "./components/QuarterCourseList";
 import { QuarterCourseSchedule } from "./components/QuarterCourseSchedule";
-import { ClassData } from "@/types/api";
+import { className } from "@/types/api";
 
 export default function QuarterPlannerPage() {
   const params = useParams();
@@ -16,7 +16,7 @@ export default function QuarterPlannerPage() {
   // Pulls scheduled courses for this quarter from context
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { scheduledByQuarter } = useSchedule();
-  const scheduled: ClassData[] = scheduledByQuarter[quarter] || [];
+  const scheduled: className[] = scheduledByQuarter[quarter] || [];
 
   return (
     <div className="flex h-full">

@@ -1,13 +1,36 @@
 import React from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { ClassData } from "@/types/api";
+import {  className } from "@/types/api";
+// import { SearchPanel } from "../../tab-1/components/SearchPanel";
+// import { useCourseSearch } from "../../tab-1/hooks/useCourseSearch";
+import { DraggableCourseItem } from "./DraggableCourseItem";
+import { useCourses } from "../../tab-1/hooks/useCourses";
 
 interface Props {
-  courses: ClassData[];
+  courses: className[];
   disableScroll?: boolean;
 }
 
 export function CourseList({ courses, disableScroll }: Props) {
+    const [sections, setSections] = React.useState<className[]>([]);
+    // const { query, setQuery, filtered } = useCourseSearch(sections);
+    const [searchAll, setSearchAll] = React.useState(false);
+    const { fetchCourses } = useCourses();
+
+  React.useEffect(() => {
+    (async () => {
+      const c = await fetchCourses();
+      // remove duplicates based on subject, and catalog_nbr
+      const uniqueCourses = Array.from(
+        new Map(c.map((item) => [`${item.subject}-${item.catalog_nbr}`, item])).values()
+      );
+      setSections(uniqueCourses);
+    })()
+  });
+
+  function toggleSearchAll() {
+    setSearchAll((prev) => !prev);
+  }
+
   return (
     <aside
       className={
@@ -15,41 +38,24 @@ export function CourseList({ courses, disableScroll }: Props) {
         (disableScroll ? "overflow-hidden" : "overflow-auto")
       }
     >
-      <h2 className="text-xl font-bold mb-4">Available Courses</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold mb-4">Available Courses</h2>
+        <button
+          onClick={toggleSearchAll}
+          className="text-sm text-blue-500 hover:underline"
+        >
+          {searchAll ? "Hide Search" : "Search All Courses"}
+        </button>
+      </div>
       <ul className="space-y-2">
-        {courses.map((course) => {
-          const id = `${course.subject}-${course.catalog_nbr}-${course.class_section}`;
-          const { attributes, listeners, setNodeRef, transform, isDragging } =
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            useDraggable({ id });
-          const style = transform
-            ? {
-                transform: `translate3d(${transform.x}px,${transform.y}px,0)`,
-                zIndex: 9999,
-              }
-            : undefined;
-
-          return (
-            <li
-              key={id}
-              ref={setNodeRef}
-              style={style}
-              {...listeners}
-              {...attributes}
-              className={
-                "p-2 border rounded bg-white cursor-grab " +
-                (isDragging ? "opacity-75" : "hover:bg-gray-50")
-              }
-            >
-              <div className="font-semibold truncate">
-                {course.subject} {course.catalog_nbr} — {course.title}
-              </div>
-              <div className="text-[10px] text-gray-600 truncate">
-                {course.meeting_days} {course.start_time}–{course.end_time}
-              </div>
-            </li>
-          );
-        })}
+        {courses.map((course) => (
+          <DraggableCourseItem key={`${course.subject}-${course.catalog_nbr}`} course={course} />
+        ))}
+        <hr />
+        {sections.filter((section) => (courses.map(c => `${c.subject}-${c.catalog_nbr}`).includes(`${section.subject}-${section.catalog_nbr}`) ? false : true))
+          .map((section) => (
+            <DraggableCourseItem key={`${section.subject}-${section.catalog_nbr}`} course={section} />
+          ))}
       </ul>
     </aside>
   );
