@@ -6,6 +6,7 @@ import { CourseTable } from "./CourseTable";
 import { CourseDetailsProps } from "@/types/api";
 import { useCourseInfo } from "../hooks/useCourseInfo";
 import { usePinnedCourses } from "../hooks/usePinnedCourses";
+import { useRMPRatings } from "../hooks/useRMPRatings";
 
 interface Props {
   course: ClassData | null;
@@ -14,9 +15,6 @@ interface Props {
   onTogglePin: () => void;
   quarter?: string;
 }
-
-
-
 
 export function CourseDetails({
   course,
@@ -30,6 +28,7 @@ export function CourseDetails({
   // const [sections, setSections] = React.useState<ClassData[]>([]);
   const { pinCourse, unpinCourse, isPinned } = usePinnedCourses();
   const [pinned, setpinned] = React.useState(false);
+  const [ratings, setRatings] = React.useState<{ [key: string]: string }>({});
 
 async function checkPinned() {
       if (!course) return;
@@ -47,6 +46,11 @@ async function checkPinned() {
       setCourseInfo(data);
     }
 
+    async function fetchRMPRatings() {
+      const data = await useRMPRatings(sections);
+      setRatings(data);
+    }
+
     // async function fetchSections() {
     //   if (!course) return;
     //   const response = await fetch(`/api/sections?courseId=${course.id}&quarter=${quarter}`);
@@ -55,7 +59,8 @@ async function checkPinned() {
     // }
     checkPinned();
     fetchCourseDetails();
-  }, [course]);
+    fetchRMPRatings();
+  }, [course, sections]);
 
   async function pin(course: ClassData) {
     await pinCourse(course);
@@ -88,6 +93,21 @@ async function checkPinned() {
       </div>
 
       <CourseTable sections={sections} />
+
+      <div className="mt-4">
+        <h3 className="text-xl font-bold">Rate My Professor Ratings:</h3>
+        <ul className="space-y-2">
+          {sections.flatMap((sec) =>
+            sec.instructors
+              .filter((ins) => ins.name.toLowerCase() !== "staff") // Filter out "Staff"
+              .map((ins) => (
+                <li key={`${ins.name}-${sec.catalog_nbr}`} className="p-2 border rounded">
+                  <strong>{ins.name}:</strong> {ratings[`${ins.name}-${sec.catalog_nbr}`] || "Fetching ratings..."}
+                </li>
+              ))
+          )}
+        </ul>
+      </div>
 
       <div className="mt-auto">
         <button
