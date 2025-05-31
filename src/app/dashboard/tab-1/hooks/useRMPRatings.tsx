@@ -19,6 +19,9 @@ export async function useRMPRatings(sections: ClassData[]): Promise<{ [key: stri
           );
           if (response.ok) {
             const data = await response.json();
+            // Extracting only numeric rating
+            // Regular message is something like "Average Rating for {instructor}: {rating}"
+            // Seems to be the default format by the RMP API
             const numericRating = data.message.match(/(\d+(\.\d+)?)/)?.[0] || "N/A";
             ratings[key] = numericRating;
           } else {
