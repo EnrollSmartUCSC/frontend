@@ -38,7 +38,7 @@ export function CourseList({ courses, pinned }: Props) {
       (course.subject.toLowerCase() + course.catalog_nbr.toLowerCase()).includes(trimmedQuery) ||
       (course.subject.toLowerCase() + " " + course.catalog_nbr.toLowerCase()).includes(trimmedQuery)
     );
-    console.log("Filtered results: ", results);
+
     setFiltered(results);
   }
 
