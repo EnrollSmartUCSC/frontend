@@ -18,7 +18,8 @@ export function CourseList({ courses, pinned }: Props) {
 
   React.useEffect(() => {
     setFiltered(courses);
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function toggleSearchAll() {
     setSearchAll((prev) => !prev);
