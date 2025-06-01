@@ -110,7 +110,6 @@ export function usePinnedCourses() {
       (c: ClassData) =>
         c.subject === subject && c.catalog_nbr === catalogNbr
     );
-    console.log("isPinned result:", result);
     return result;
   }
 

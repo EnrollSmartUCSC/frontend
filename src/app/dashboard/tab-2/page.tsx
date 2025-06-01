@@ -55,7 +55,6 @@ export default function PlannerIndexPage() {
   function handleDragStart(event: DragStartEvent) {
     // setIsDragging(true);
     const draggedId = String(event.active.id);
-    console.log("courses: ", courses);
     let course = pinned.find(
       (c) => `${c.subject}-${c.catalog_nbr}` === draggedId
     );

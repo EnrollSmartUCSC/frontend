@@ -30,8 +30,6 @@ export default function DashboardLayout({
       },
     })
       })
-
-      console.log("User is signed in:", user);
     }
   }, [router]);
 

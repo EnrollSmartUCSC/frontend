@@ -17,15 +17,15 @@ export default function Tab1Page() {
   const { query, setQuery, filtered } = useCourseSearch(sections);
   const [selected, setSelected] = React.useState<ClassData | null>(null);
   const [details, setDetails] = React.useState<ClassData[]>([]);
-  const [instructors, setInstructors] = React.useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [instructors, setInstructors] = React.useState<any[]|null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [quarter] = React.useState("2025 Fall Quarter");
   const [pinned, setPinned] = React.useState<ClassData[]>([]);
   const { fetchPinnedCourses } = usePinnedCourses();
 
   React.useEffect(() => {
-    setInstructors([]);
-    setDetails([]);
-    if (!selected) return;
+    setInstructors(null);
+    // setDetails([]);
+    // if (!selected) return;
     async function fetchDetails() {
       const courseDetails = await fetchCourseDetails(selected, quarter);
       setDetails(courseDetails);
@@ -62,7 +62,12 @@ export default function Tab1Page() {
     courses();
     getPinned();
     fetchDetails();
-  }, [selected, quarter]);
+  },[selected]);
+
+  function handleSelect(course: ClassData) {
+    setInstructors(null);
+    setSelected(course);
+  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -82,7 +87,7 @@ export default function Tab1Page() {
           onQueryChange={setQuery}
           results={filtered}
           selected={selected}
-          onSelect={setSelected}
+          onSelect={handleSelect}
         />
 
         <CourseDetails
@@ -94,7 +99,7 @@ export default function Tab1Page() {
             const updated = await fetchPinnedCourses();
             setPinned(updated);
           }}
-          // quarter={quarter}
+          quarter={quarter}
         />
       </main>
     </div>

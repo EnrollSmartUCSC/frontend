@@ -16,6 +16,7 @@ export function SearchPanel({
   selected,
   onSelect,
 }: Props) {
+
   return (
     <div className="flex flex-col w-1/4 pr-4 h-full">
       <input

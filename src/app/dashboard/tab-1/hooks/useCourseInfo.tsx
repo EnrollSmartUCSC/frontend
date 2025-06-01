@@ -64,6 +64,5 @@ export async function useCourseInstructors(sections: any[]): Promise<any[]> {
       });
     }
   }
-  console.log("RMP Results: ", rmpResults);
   return rmpResults;
 }

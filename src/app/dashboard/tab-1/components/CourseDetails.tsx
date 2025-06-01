@@ -10,15 +10,17 @@ import { Progress, Space } from "antd";
 import type { ProgressProps } from 'antd';
 import { Flex } from "antd";
 import { Typography } from "antd";
+import { Spin } from "antd"
+import { getwatchlist, addToWatchlist, removeFromWatchlist } from "../hooks/useWatchlist";
 
 const { Text } = Typography;
 interface Props {
   course: ClassData | null;
   sections: ClassData[];
-  instructors: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+  instructors: any[]|null; // eslint-disable-line @typescript-eslint/no-explicit-any
   // isPinned: boolean;
   onTogglePin: () => void;
-  quarter?: string;
+  quarter: string;
 }
 
 const colors: ProgressProps['strokeColor'] = {
@@ -34,7 +36,7 @@ export function CourseDetails({
   // isPinned,
   instructors,
   onTogglePin,
-  // quarter
+  quarter
 }: Props) {
   if (!course) return <p className="text-gray-500">Select a course.</p>;
   const [courseInfo, setCourseInfo] = React.useState<CourseDetailsProps | null>(null);
@@ -42,8 +44,8 @@ export function CourseDetails({
   const { pinCourse, unpinCourse, isPinned } = usePinnedCourses();
   const [pinned, setpinned] = React.useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [rmp, setRMP] = React.useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
-
+  const [rmp, setRMP] = React.useState<any[]|null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [watching, setWatching] = React.useState(false);
 async function checkPinned() {
       if (!course) return;
       const pinned = await isPinned(course);
@@ -51,9 +53,9 @@ async function checkPinned() {
     }
 
   React.useEffect(() => {
-    setRMP([]);
+    setRMP(null);
     setCourseInfo(null);
-    if (!course) return;
+    // if (!course) return;
     async function fetchCourseDetails() {
       if (!course) return;
       const data = await useCourseInfo({
@@ -65,20 +67,40 @@ async function checkPinned() {
 
     async function fetchRMP() {
       if (!course) return;
+      if (!instructors) return;
       const data = await useCourseInstructors(instructors);
       setRMP(data);
     }
-    // async function fetchSections() {
-    //   if (!course) return;
-    //   const response = await fetch(`/api/sections?courseId=${course.id}&quarter=${quarter}`);
-    //   const data = await response.json();
-    //   setSections(data);
-    // }
+
+    
+
+    
     checkPinned();
     fetchCourseDetails();
     fetchRMP();
+    fetchWatchlist()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course, instructors]);
+
+  async function fetchWatchlist() {
+      if (!course) return;
+      const watchlist = await getwatchlist();
+      const isWatching = watchlist.some((c: { subject: string; catalog_nbr: string; }) => 
+        c.subject === course.subject && c.catalog_nbr === course.catalog_nbr
+      );
+      setWatching(isWatching);
+    }
+  
+  async function handleWatchlist(course: ClassData) {
+    if (!course) return;
+    if (watching) {
+      await removeFromWatchlist(course);
+      await fetchWatchlist();
+    } else {
+      await addToWatchlist(course, quarter);
+      await fetchWatchlist();
+    }
+  }
 
   async function pin(course: ClassData) {
     await pinCourse(course);
@@ -112,9 +134,8 @@ async function checkPinned() {
 
       <CourseTable sections={sections} />
       <Space direction="horizontal" className="mt-4 flex-wrap justify-evenly">
-        {rmp.length > 0 ? (
+        {rmp && rmp.length > 0 ? (
           rmp.map((i) => {
-            console.log(i);
       if (i.rating === null || i.professor === "Staff") {
           return (
             <Flex key={i.section} className="flex-col items-center mt-4 justify-start">
@@ -131,16 +152,25 @@ async function checkPinned() {
           <Text strong>{i.professor}</Text>
           <Text strong>{`${i.subject} ${i.catalog_nbr}- ${i.section} `}</Text>
         </Flex>)
-      })) : <></>}
+      })) : rmp?.length == 0 ? <></> : <Spin className="mt-4" size="large" tip="Loading Ratings..." />}
       </Space>
 
-      <div className="mt-auto">
+      <div className="mt-auto flex gap-4">
         <button
           onClick={pinned ? () => unpin(course) : () => pin(course)}
           className="px-4 py-2 rounded hover:cursor-pointer"
           style={{ backgroundColor: "#FDC700", color: "#003C6C" }}
         >
           {pinned ? "Unpin Course" : "Pin Course"}
+        </button>
+        <button 
+          onClick={() => {
+            handleWatchlist(course);
+          }}
+          className="px-4 py-2 rounded hover:cursor-pointer"
+          style={{ backgroundColor: "#FDC700", color: "#003C6C" }}
+        >
+          {watching ? "Rremove from Watchlist" : "Add to Watchlist"}
         </button>
       </div>
     </div>
