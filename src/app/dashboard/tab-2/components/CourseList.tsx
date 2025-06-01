@@ -18,7 +18,7 @@ export function CourseList({ courses, pinned }: Props) {
 
   React.useEffect(() => {
     setFiltered(courses);
-  }, [courses]);
+  });
 
   function toggleSearchAll() {
     setSearchAll((prev) => !prev);
