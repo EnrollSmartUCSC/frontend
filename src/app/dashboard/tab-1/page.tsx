@@ -17,13 +17,34 @@ export default function Tab1Page() {
   const { query, setQuery, filtered } = useCourseSearch(sections);
   const [selected, setSelected] = React.useState<ClassData | null>(null);
   const [details, setDetails] = React.useState<ClassData[]>([]);
+  const [instructors, setInstructors] = React.useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [quarter] = React.useState("2025 Fall Quarter");
   const [pinned, setPinned] = React.useState<ClassData[]>([]);
   const { fetchPinnedCourses } = usePinnedCourses();
 
   React.useEffect(() => {
+    setInstructors([]);
+    setDetails([]);
+    if (!selected) return;
     async function fetchDetails() {
-      setDetails(await fetchCourseDetails(selected, quarter));
+      const courseDetails = await fetchCourseDetails(selected, quarter);
+      setDetails(courseDetails);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const profs: any[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      courseDetails.forEach((section: any) => {
+        const data = {
+          subject: section.subject,
+          catalog_nbr: section.catalog_nbr,
+          section: section.class_section,
+          professor: {
+            cruzid: section.instructors[0]?.cruzid || "",
+            name: section.instructors[0]?.name || "Staff",
+          }
+       }
+        profs.push(data);
+      });
+      setInstructors(profs);
     }
 
     async function getPinned() {
@@ -67,6 +88,7 @@ export default function Tab1Page() {
         <CourseDetails
           course={selected}
           sections={details}
+          instructors={instructors}
           // isPinned={pin}
           onTogglePin={async () => {
             const updated = await fetchPinnedCourses();

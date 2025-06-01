@@ -4,24 +4,35 @@ import React from "react";
 import { ClassData } from "@/types/api";
 import { CourseTable } from "./CourseTable";
 import { CourseDetailsProps } from "@/types/api";
-import { useCourseInfo } from "../hooks/useCourseInfo";
+import { useCourseInfo, useCourseInstructors } from "../hooks/useCourseInfo";
 import { usePinnedCourses } from "../hooks/usePinnedCourses";
+import { Progress, Space } from "antd";
+import type { ProgressProps } from 'antd';
+import { Flex } from "antd";
+import { Typography } from "antd";
 
+const { Text } = Typography;
 interface Props {
   course: ClassData | null;
   sections: ClassData[];
+  instructors: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   // isPinned: boolean;
   onTogglePin: () => void;
   quarter?: string;
 }
 
-
+const colors: ProgressProps['strokeColor'] = {
+  '0%': '#ff5802',
+  "50%": '#ffe58f',
+  '100%': '#5dd068',
+};
 
 
 export function CourseDetails({
   course,
   sections,
   // isPinned,
+  instructors,
   onTogglePin,
   // quarter
 }: Props) {
@@ -30,6 +41,8 @@ export function CourseDetails({
   // const [sections, setSections] = React.useState<ClassData[]>([]);
   const { pinCourse, unpinCourse, isPinned } = usePinnedCourses();
   const [pinned, setpinned] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [rmp, setRMP] = React.useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
 
 async function checkPinned() {
       if (!course) return;
@@ -38,6 +51,9 @@ async function checkPinned() {
     }
 
   React.useEffect(() => {
+    setRMP([]);
+    setCourseInfo(null);
+    if (!course) return;
     async function fetchCourseDetails() {
       if (!course) return;
       const data = await useCourseInfo({
@@ -47,6 +63,11 @@ async function checkPinned() {
       setCourseInfo(data);
     }
 
+    async function fetchRMP() {
+      if (!course) return;
+      const data = await useCourseInstructors(instructors);
+      setRMP(data);
+    }
     // async function fetchSections() {
     //   if (!course) return;
     //   const response = await fetch(`/api/sections?courseId=${course.id}&quarter=${quarter}`);
@@ -55,7 +76,9 @@ async function checkPinned() {
     // }
     checkPinned();
     fetchCourseDetails();
-  }, [course]);
+    fetchRMP();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course, instructors]);
 
   async function pin(course: ClassData) {
     await pinCourse(course);
@@ -88,6 +111,28 @@ async function checkPinned() {
       </div>
 
       <CourseTable sections={sections} />
+      <Space direction="horizontal" className="mt-4 flex-wrap justify-evenly">
+        {rmp.length > 0 ? (
+          rmp.map((i) => {
+            console.log(i);
+      if (i.rating === null || i.professor === "Staff") {
+          return (
+            <Flex key={i.section} className="flex-col items-center mt-4 justify-start">
+              <Progress type="dashboard" strokeColor={colors} />
+              <Text strong>{i.professor}</Text>
+              <Text type="secondary">No rating available</Text>
+            </Flex>
+          );
+      }
+            const key = `${i.section}`;
+       return(
+       <Flex key={key} className="flex-col items-center mt-4 justify-start">
+          <Progress type="dashboard" percent={parseFloat(((i.rating/5)*100).toFixed(2))} strokeColor={colors} />
+          <Text strong>{i.professor}</Text>
+          <Text strong>{`${i.subject} ${i.catalog_nbr}- ${i.section} `}</Text>
+        </Flex>)
+      })) : <></>}
+      </Space>
 
       <div className="mt-auto">
         <button
