@@ -25,17 +25,18 @@ export function CourseList({ courses, pinned }: Props) {
   }
 
   function onQueryChange(q: string) {
-    setQuery(q.trim().toLowerCase());
+    setQuery(q);
     if (q.trim() === "") {
       setFiltered(courses);
       return;
     }
+    const trimmedQuery = q.trim().toLowerCase();
     const results = courses.filter((course) => 
-      course.subject.toLowerCase().includes(query) ||
-      course.catalog_nbr.toLowerCase().includes(query) ||
-      course.title.toLowerCase().includes(query) ||
-      (course.subject.toLowerCase() + course.catalog_nbr.toLowerCase()).includes(query) ||
-      (course.subject.toLowerCase() + " " + course.catalog_nbr.toLowerCase()).includes(query)
+      course.subject.toLowerCase().includes(trimmedQuery) ||
+      course.catalog_nbr.toLowerCase().includes(trimmedQuery) ||
+      course.title.toLowerCase().includes(trimmedQuery) ||
+      (course.subject.toLowerCase() + course.catalog_nbr.toLowerCase()).includes(trimmedQuery) ||
+      (course.subject.toLowerCase() + " " + course.catalog_nbr.toLowerCase()).includes(trimmedQuery)
     );
     console.log("Filtered results: ", results);
     setFiltered(results);
