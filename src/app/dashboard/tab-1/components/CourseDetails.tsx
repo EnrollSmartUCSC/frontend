@@ -72,17 +72,18 @@ async function checkPinned() {
   return (
     <div className="flex-1 ml-4 border rounded p-4 flex flex-col overflow-auto">
       <div className="mb-4">
-        <h2 className="text-2xl font-semibold">
+        <h2 className="text-2xl font-semibold font-mono">
           {course.subject} {course.catalog_nbr} — {course.title}
         </h2>
-        <p className="mt-2">
+        <p className="mt-2 text-[#333333]">
+          <span className="text-[#0D60AD] font-semibold">Credits:</span>{" "}
+          {courseInfo?.credits}
+        </p>
+        <p className="mt-2 text-[#333333]">
           <strong>Description:</strong> {courseInfo?.description}
         </p>
-        <p className="mt-2">
-          <strong>Credits:</strong> {courseInfo?.credits}
-        </p>
         <p className="mt-2">{}</p>
-        <p className="mt-2">
+        <p className="mt-2 text-[#333333]">
           <strong>Prerequisites:</strong> {courseInfo?.prerequisites}
         </p>
       </div>
@@ -92,8 +93,8 @@ async function checkPinned() {
       <div className="mt-auto">
         <button
           onClick={pinned ? () => unpin(course) : () => pin(course)}
-          className="px-4 py-2 rounded hover:cursor-pointer"
-          style={{ backgroundColor: "#FDC700", color: "#003C6C" }}
+          className="px-4 py-2 rounded hover:cursor-pointer hover:shadow-lg transition-colors duration-200"
+          style={{ backgroundColor: "#FBE70A", color: "#67600D" }}
         >
           {pinned ? "Unpin Course" : "Pin Course"}
         </button>

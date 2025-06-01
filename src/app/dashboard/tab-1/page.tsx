@@ -46,7 +46,7 @@ export default function Tab1Page() {
   return (
     <div className="flex flex-col h-screen">
       <header className="px-4 py-2 border-b">
-        <h1 className="text-2xl font-bold">Course Search</h1>
+        <h1 className="text-2xl font-bold font-jetbrains text-[#333333]">Course Search</h1>
       </header>
 
       <main className="flex flex-1 p-4 overflow-hidden">

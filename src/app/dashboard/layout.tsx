@@ -45,13 +45,14 @@ export default function DashboardLayout({
 
   return (
     <ScheduleProvider>
-      <div className="min-h-screen flex">
-        <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
+      <div className="min-h-screen flex font-jetbrains">
+        <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col relative font-mono">
           <nav className="flex flex-col flex-1 gap-4">
             <button
               onClick={() => router.push("/dashboard")}
               className="block text-3xl px-4 py-2 rounded
-              hover:cursor-pointer hover:bg-gray-300"
+              hover:cursor-pointer hover:bg-gray-300
+              text-[#0D60AD] font-sans"
             >
               EnrollSmart
             </button>

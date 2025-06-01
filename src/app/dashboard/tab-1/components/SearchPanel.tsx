@@ -42,7 +42,7 @@ export function SearchPanel({
                   onClick={() => onSelect(c)}
                   className={
                     `p-2 rounded cursor-pointer ` +
-                    (isSel ? "bg-gray-200" : "hover:bg-gray-100")
+                    (isSel ? "bg-[#D7F1F8]" : "hover:bg-[#D7F1F8] hover:opacity-80")
                   }
                 >
                   <span className="font-semibold">
