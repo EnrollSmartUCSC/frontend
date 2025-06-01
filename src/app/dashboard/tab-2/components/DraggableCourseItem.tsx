@@ -11,10 +11,12 @@ export function DraggableCourseItem({ course }: DraggableCourseItemProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({ id });
 
-  const style = transform
+  const style: React.CSSProperties | undefined = transform
     ? {
         transform: `translate3d(${transform.x}px,${transform.y}px,0)`,
         zIndex: 9999,
+        position: "absolute", // necessary for z-index to take effect
+        pointerEvents: "none", // optional for smoother dragging UX
       }
     : undefined;
 

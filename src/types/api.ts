@@ -5,6 +5,11 @@ export interface className {
   catalog_nbr: string;
   title: string;
 }
+
+export interface plan {
+  [term: string]: className[];
+}
+
 export interface ClassData {
   catalog_nbr: string;
   class_nbr: string;
