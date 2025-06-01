@@ -11,7 +11,7 @@ export default function QuarterPlannerPage({season, year, plan, setPlan}: {
   setPlan: (plan: plan) => void;
 }) {
   const quarterId = `${season} ${year}`;
-                  // eslint-disable-next-line react-hooks/rules-of-hooks
+                   
                   const { isOver, setNodeRef } = useDroppable({
                     id: quarterId,
                   });

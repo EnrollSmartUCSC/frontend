@@ -7,10 +7,10 @@ import { DraggableCourseItem } from "./DraggableCourseItem";
 interface Props {
   courses: className[];
   pinned: className[];
-  disableScroll?: boolean;
+  // disableScroll?: boolean;
 }
 
-export function CourseList({ courses, pinned, disableScroll }: Props) {
+export function CourseList({ courses, pinned }: Props) {
     // const { query, setQuery, filtered } = useCourseSearch(sections);
     const [searchAll, setSearchAll] = React.useState(false);
     const [filtered, setFiltered] = React.useState<className[]>([]);

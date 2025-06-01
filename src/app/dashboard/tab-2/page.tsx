@@ -21,7 +21,7 @@ export default function PlannerIndexPage() {
   const [pinned, setPinned] = useState<className[]>([]);
   const [activeCourse, setActiveCourse] = useState<className | null>(null);
   const [plan, setPlan] = useState<plan>({});
-  const [isDragging, setIsDragging] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
   const { fetchPinnedCourses } = usePinnedCourses();
   const { fetchCourses } = useCourses();
   const { fetchSchedule } = useSchedule();
@@ -50,12 +50,10 @@ export default function PlannerIndexPage() {
       setPlan(c);
     })();
     })()
-    console.log("pinned: ", pinned);
-    console.log("courses: ", courses);
-  }, []);
+  });
 
   function handleDragStart(event: DragStartEvent) {
-    setIsDragging(true);
+    // setIsDragging(true);
     const draggedId = String(event.active.id);
     console.log("courses: ", courses);
     let course = pinned.find(
@@ -68,7 +66,7 @@ export default function PlannerIndexPage() {
   }
 
   async function handleDragEnd(event: DragEndEvent) {
-    setIsDragging(false);
+    // setIsDragging(false);
     if (event.over && activeCourse) {
       const quarterId = String(event.over.id);
       await addCourse(activeCourse.catalog_nbr, activeCourse.subject, activeCourse.title, quarterId);
@@ -83,7 +81,7 @@ export default function PlannerIndexPage() {
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={async(e) => {handleDragEnd(e)}}>
       <div className="flex h-full">
-        <CourseList courses={courses} pinned={pinned} disableScroll={isDragging} />
+        <CourseList courses={courses} pinned={pinned} />
 
         <MultiYearPlanner plan={plan} setPlan = {setPlan}/>
       </div>
@@ -92,7 +90,7 @@ export default function PlannerIndexPage() {
         {activeCourse ? (
           <div className="bg-blue-100 rounded-md p-2 text-xs shadow-lg z-50 pointer-events-none">
             <div className="font-semibold truncate">
-              {activeCourse.subject} {activeCourse.catalog_nbr} —{" "}
+              {activeCourse.subject} {activeCourse.catalog_nbr}—{" "}
               {activeCourse.title}
             </div>
             {/* <div className="text-[10px] text-gray-700 truncate">
