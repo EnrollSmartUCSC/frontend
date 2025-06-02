@@ -39,7 +39,7 @@ export default function DashboardLayout({
     auth.signOut().then(() => {
       // Sign-out successful.
       console.log("Sign-out successful.");
-      router.push("/login");
+      router.push("/");
     });
   }
 
