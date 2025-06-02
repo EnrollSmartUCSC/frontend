@@ -30,8 +30,6 @@ export default function DashboardLayout({
       },
     })
       })
-
-      router.push("/dashboard/tab-1");
     }
   }, [router]);
 

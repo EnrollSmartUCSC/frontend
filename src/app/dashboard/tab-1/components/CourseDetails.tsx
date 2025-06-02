@@ -14,6 +14,7 @@ import { Spin } from "antd"
 import { getwatchlist, addToWatchlist, removeFromWatchlist } from "../hooks/useWatchlist";
 
 const { Text } = Typography;
+const { Title } = Typography;
 interface Props {
   course: ClassData | null;
   sections: ClassData[];
@@ -133,6 +134,13 @@ async function checkPinned() {
       </div>
 
       <CourseTable sections={sections} />
+      {rmp && rmp.length > 0 && (
+      <Flex className="mt-4 flex-col">
+        <Title className="mt-2" level={3}>Instructor Ratings:</Title>
+        <Text type="secondary">
+          Ratings are from RateMyProfessors.com
+        </Text>
+      </Flex>)}
       <Space direction="horizontal" className="mt-4 flex-wrap justify-evenly">
         {rmp && rmp.length > 0 ? (
           rmp.map((i) => {
@@ -170,7 +178,7 @@ async function checkPinned() {
           className="px-4 py-2 rounded hover:cursor-pointer"
           style={{ backgroundColor: "#FDC700", color: "#003C6C" }}
         >
-          {watching ? "Rremove from Watchlist" : "Add to Watchlist"}
+          {watching ? "Remove from Watchlist" : "Add to Watchlist"}
         </button>
       </div>
     </div>
