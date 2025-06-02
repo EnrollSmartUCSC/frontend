@@ -52,19 +52,21 @@ export interface CourseDetailsProps {
   credits: string;
 }
 
-// export interface TrackClassItem {
-//   subject: string;
-//   class_nbr: string;
-// }
+export interface watchlistClass {
+  catalog_nbr: string;
+  subject: string;
+}
 
-// export interface UserSignup {
-//   email: string;
-//   password: string;
-//   phoneNo: string;
-//   pingMedium: string;
-// }
+export interface WatchlistedClass {
+  subject: string
+  catalog_nbr: string
+  title: string
+  instructor: string
+  enrolled: number[]
+  capacity: number[]
+  waitlist?: number[]
+  credits: number
+  status: 'Open' | 'Waitlist' | 'Closed' | 'Not offered'
+  isTracking: boolean
+}
 
-// export interface UserSignin {
-//   email: string;
-//   password: string;
-// }

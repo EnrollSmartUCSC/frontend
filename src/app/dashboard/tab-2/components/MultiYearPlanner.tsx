@@ -4,6 +4,7 @@ import React from "react";
 // import { useSchedule } from "@/context/ScheduleContext";
 import { plan } from "@/types/api";
 import QuarterPlannerPage from "./quarter";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Currently hardcoded years, ideally the user
 // Should be able to add or delete years
@@ -14,7 +15,7 @@ export function MultiYearPlanner({plan, setPlan}: {plan: plan, setPlan: (plan: p
   // const router = useRouter();
 
   return (
-    <div className="flex-1 p-6 overflow-auto">
+    <ScrollArea className="flex-1 h-screen w-4/5 overflow-y-auto overflow-x-hidden">
       <h1 className="text-3xl font-bold mb-6">4-Year Planner</h1>
       <table className="table-fixed w-full border-collapse">
         <thead>
@@ -38,6 +39,6 @@ export function MultiYearPlanner({plan, setPlan}: {plan: plan, setPlan: (plan: p
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollArea>
   );
 }

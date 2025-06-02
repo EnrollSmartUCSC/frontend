@@ -26,7 +26,8 @@ export default function QuarterPlannerPage() {
       const c = await fetchSchedule();
       setPlan(c);
     })();
-  }, [fetchSchedule]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const scheduled: className[] = plan[quarter] || [];
 
   return (

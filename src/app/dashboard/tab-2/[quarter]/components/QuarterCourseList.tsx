@@ -9,14 +9,14 @@ export function QuarterCourseList({ courses }: Props) {
   return (
     <aside className="w-1/4 border-r p-4 overflow-auto">
       <h2 className="text-xl font-bold mb-4">This Quarter’s Courses</h2>
-      <ul className="space-y-2">
+      <ul className="space-y-2 p-2">
         {courses.length > 0 ? (
           courses.map((course) => {
             const key = `${course.subject}-${course.catalog_nbr}-${course.title}`;
             return (
               <li
                 key={key}
-                className="p-2 border rounded flex items-center justify-between"
+                className="p-2 border rounded flex items-center justify-between w-full"
               >
                 <div>
                   <span className="font-semibold">

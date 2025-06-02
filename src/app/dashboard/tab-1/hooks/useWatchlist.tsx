@@ -1,5 +1,5 @@
 import { auth } from "@/app/utils/firebase";
-import { ClassData } from "@/types/api";
+import { ClassData, watchlistClass } from "@/types/api";
 
 export async function getwatchlist() {
   const token = await auth.currentUser?.getIdToken() || '';
@@ -49,7 +49,7 @@ export async function addToWatchlist(course: ClassData, quarter: string) {
   return data; 
 }
 
-export async function removeFromWatchlist(course: ClassData) {
+export async function removeFromWatchlist(course: watchlistClass) {
   const token = await auth.currentUser?.getIdToken() || '';
 
   const response = await fetch(

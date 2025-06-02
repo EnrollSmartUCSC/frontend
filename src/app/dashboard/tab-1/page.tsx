@@ -62,6 +62,7 @@ export default function Tab1Page() {
     courses();
     getPinned();
     fetchDetails();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[selected]);
 
   function handleSelect(course: ClassData) {

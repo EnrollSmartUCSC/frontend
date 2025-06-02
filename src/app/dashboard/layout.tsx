@@ -30,6 +30,8 @@ export default function DashboardLayout({
       },
     })
       })
+
+      router.push("/dashboard/tab-1");
     }
   }, [router]);
 
@@ -44,7 +46,7 @@ export default function DashboardLayout({
   return (
     <ScheduleProvider>
       <div className="min-h-screen flex">
-        <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col">
+        <aside className="w-60 bg-gray-100 p-6 border-r flex flex-col h-screen">
           <nav className="flex flex-col flex-1 gap-4">
             <button
               onClick={() => router.push("/dashboard")}
@@ -70,13 +72,13 @@ export default function DashboardLayout({
               Planner
             </button>
 
-            {/* <button
+            <button
               onClick={() => router.push("/dashboard/tab-3")}
               className="block text-center py-2 rounded
               hover:cursor-pointer hover:bg-gray-300"
             >
-              Tab 3
-            </button> */}
+              Watchlist and tracking
+            </button>
 
             <button
               onClick={() => {

@@ -21,7 +21,8 @@ export default function PlannerIndexPage() {
   const [pinned, setPinned] = useState<className[]>([]);
   const [activeCourse, setActiveCourse] = useState<className | null>(null);
   const [plan, setPlan] = useState<plan>({});
-  // const [isDragging, setIsDragging] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isDragging, setIsDragging] = useState(false);
   const { fetchPinnedCourses } = usePinnedCourses();
   const { fetchCourses } = useCourses();
   const { fetchSchedule } = useSchedule();
@@ -50,10 +51,11 @@ export default function PlannerIndexPage() {
       setPlan(c);
     })();
     })()
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleDragStart(event: DragStartEvent) {
-    // setIsDragging(true);
+    setIsDragging(true);
     const draggedId = String(event.active.id);
     let course = pinned.find(
       (c) => `${c.subject}-${c.catalog_nbr}` === draggedId
@@ -65,7 +67,7 @@ export default function PlannerIndexPage() {
   }
 
   async function handleDragEnd(event: DragEndEvent) {
-    // setIsDragging(false);
+    setIsDragging(false);
     if (event.over && activeCourse) {
       const quarterId = String(event.over.id);
       await addCourse(activeCourse.catalog_nbr, activeCourse.subject, activeCourse.title, quarterId);
@@ -78,24 +80,19 @@ export default function PlannerIndexPage() {
   }
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={async(e) => {handleDragEnd(e)}}>
-      <div className="flex h-full">
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="flex h-screen overflow-hidden">
         <CourseList courses={courses} pinned={pinned} />
-
-        <MultiYearPlanner plan={plan} setPlan = {setPlan}/>
+        <MultiYearPlanner plan={plan} setPlan={setPlan} />
       </div>
 
       <DragOverlay>
         {activeCourse ? (
-          <div className="bg-blue-100 rounded-md p-2 text-xs shadow-lg z-50 pointer-events-none">
-            <div className="font-semibold truncate">
-              {activeCourse.subject} {activeCourse.catalog_nbr}—{" "}
-              {activeCourse.title}
+          <div className="bg-blue-100 rounded-md p-3 shadow-lg z-50 pointer-events-none border border-blue-200">
+            <div className="font-semibold text-sm">
+              {activeCourse.subject} {activeCourse.catalog_nbr}
             </div>
-            {/* <div className="text-[10px] text-gray-700 truncate">
-              {activeCourse.meeting_days} {activeCourse.start_time}–
-              {activeCourse.end_time}
-            </div> */}
+            <div className="text-xs text-gray-700 truncate">{activeCourse.title}</div>
           </div>
         ) : null}
       </DragOverlay>

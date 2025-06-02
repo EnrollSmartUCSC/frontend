@@ -118,7 +118,7 @@ export default function Signup() {
       </p>
 
 
-      <button
+      {/* <button
         onClick={() => router.push("/")}
         className="absolute top-4 left-4 hover:cursor-pointer"
       >
@@ -130,7 +130,7 @@ export default function Signup() {
         className="absolute top-4 right-4 hover:cursor-pointer"
       >
         -&gt; Go to dashboard (placeholder for testing)
-      </button>
+      </button> */}
     </div>
   );
 }
