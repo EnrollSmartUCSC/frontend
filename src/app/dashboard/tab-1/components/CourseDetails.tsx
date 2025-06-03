@@ -44,7 +44,6 @@ export function CourseDetails({
   // const [sections, setSections] = React.useState<ClassData[]>([]);
   const { pinCourse, unpinCourse, isPinned } = usePinnedCourses();
   const [pinned, setpinned] = React.useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rmp, setRMP] = React.useState<any[]|null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [watching, setWatching] = React.useState(false);
 async function checkPinned() {

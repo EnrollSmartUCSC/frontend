@@ -16,7 +16,7 @@ export default function DashboardLayout({
   useEffect(() => {
     if (!auth.currentUser) {
       // User is not signed in, redirect to login page
-      router.push("/login");
+      router.push("/");
     } else {
       // User is signed in, you can access user information here
       const user = auth.currentUser;
@@ -37,7 +37,7 @@ export default function DashboardLayout({
     auth.signOut().then(() => {
       // Sign-out successful.
       console.log("Sign-out successful.");
-      router.push("/login");
+      router.push("/");
     });
   }
 
