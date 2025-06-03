@@ -1,7 +1,18 @@
-import { test, beforeEach, vi, expect } from "vitest";
-import { render, cleanup, screen, getByText } from "@testing-library/react";
-import { fireEvent } from "@testing-library/react";
+import {
+  test,
+  beforeEach,
+  vi,
+  // expect
+} from "vitest";
+import {
+  render,
+  cleanup,
+  // screen,
+  // getByText
+} from "@testing-library/react";
+// import { fireEvent } from "@testing-library/react";
 import Home from "../src/app/page";
+
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
