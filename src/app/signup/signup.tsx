@@ -39,7 +39,7 @@ export default function Signup({ switchToLogin }: SignupProps) {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          router.push("/dashboard");
+          alert("Successfully signed up! Please log in.");
         } else {
           alert(data.message);
         }
@@ -56,7 +56,7 @@ export default function Signup({ switchToLogin }: SignupProps) {
     // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     // end of scopes
     // language by user
-    auth.useDeviceLanguage();
+    // auth.useDeviceLanguage();
     // redirect so user can select account
     signInWithPopup(auth, provider).then(async (res) => {
       if (res.user) {

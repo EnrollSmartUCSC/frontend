@@ -51,6 +51,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
     "jsdom": "*",
+    "msw": "^2.9.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
     "tw-animate-css": "^1.2.9",
