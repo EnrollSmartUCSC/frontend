@@ -110,7 +110,12 @@ import React from "react";
 import { useCourseSearch } from "../src/app/dashboard/tab-1/hooks/useCourseSearch";
 import { useCourses } from "../src/app/dashboard/tab-1/hooks/useCourses";
 
-// Currently here because of issues with fetching actual data
+import { CourseTable } from "../src/app/dashboard/tab-1/components/CourseTable";
+import { SearchPanel } from "../src/app/dashboard/tab-1/components/SearchPanel";
+import { PinnedCoursesPanel } from "../src/app/dashboard/tab-1/components/PinnedCoursesPanel";
+import { CourseDetails } from "../src/app/dashboard/tab-1/components/CourseDetails";
+
+
 const mockCoursesData = [
   {
     catalog_nbr: '101',
@@ -204,6 +209,7 @@ const mockCoursesData = [
   }
 ];
 
+// START Course Search Hook Tests
 test("Course search filtering functionality", () => {
   const { result: searchResult } = renderHook(() => useCourseSearch(mockCoursesData));
   expect(searchResult.current.filtered).toHaveLength(3);
@@ -249,160 +255,509 @@ test("Course search filtering functionality", () => {
   expect(searchResult.current.filtered).toHaveLength(3);
 });
 
-// API Ping Tests for all endpoints
-test("ping /hello endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/hello`);
-    console.log(`/hello - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/hello endpoint error:', error);
-    throw error;
-  }
+test("Course search filtering functionality", () => {
+  const { result: searchResult } = renderHook(() => useCourseSearch(mockCoursesData));
+  expect(searchResult.current.filtered).toHaveLength(3);
+  
+  // By subject
+  act(() => {
+    searchResult.current.setQuery('CS');
+  });
+  
+  expect(searchResult.current.filtered).toHaveLength(2);
+  expect(searchResult.current.filtered.every(course => course.subject === 'CS')).toBe(true);
+  
+  // By catalog number
+  act(() => {
+    searchResult.current.setQuery('101');
+  });
+  
+  expect(searchResult.current.filtered).toHaveLength(2);
+  expect(searchResult.current.filtered.every(course => course.catalog_nbr === '101')).toBe(true);
+  
+  // By title
+  act(() => {
+    searchResult.current.setQuery('Data');
+  });
+  
+  expect(searchResult.current.filtered).toHaveLength(1);
+  expect(searchResult.current.filtered[0].title).toBe('Data Structures');
+  
+  // Combined search (subject + catalog number)
+  act(() => {
+    searchResult.current.setQuery('CS101');
+  });
+  
+  expect(searchResult.current.filtered).toHaveLength(1);
+  expect(searchResult.current.filtered[0].subject).toBe('CS');
+  expect(searchResult.current.filtered[0].catalog_nbr).toBe('101');
+  
+  // Search clearing
+  act(() => {
+    searchResult.current.setQuery('');
+  });
+  
+  expect(searchResult.current.filtered).toHaveLength(3);
 });
 
-test("ping /api/v1/courses endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/courses`);
-    console.log(`/api/v1/courses - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/courses endpoint error:', error);
-    throw error;
-  }
+test("Course search handles empty results", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('NONEXISTENT');
+  });
+  
+  expect(result.current.filtered).toHaveLength(0);
 });
 
-test("ping /api/v1/classData endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/classData`);
-    console.log(`/api/v1/classData - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/classData endpoint error:', error);
-    throw error;
-  }
+test("Course search is case insensitive", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('cs');
+  });
+  
+  expect(result.current.filtered).toHaveLength(2);
+  expect(result.current.filtered.every(course => course.subject === 'CS')).toBe(true);
 });
 
-test("ping /api/v1/quarterCode endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/quarterCode`);
-    console.log(`/api/v1/quarterCode - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/quarterCode endpoint error:', error);
-    throw error;
-  }
+test("Course search removes duplicate courses", () => {
+  const duplicateData = [...mockCoursesData, mockCoursesData[0]];
+  const { result } = renderHook(() => useCourseSearch(duplicateData));
+  
+  expect(result.current.filtered).toHaveLength(3);
 });
 
-test("ping /api/v1/courseInfo endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/courseInfo`);
-    console.log(`/api/v1/courseInfo - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/courseInfo endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch returns all courses initially", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  expect(result.current.filtered).toHaveLength(3);
 });
 
-test("ping /api/v1/professor-rating endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/professor-rating`);
-    console.log(`/api/v1/professor-rating - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/professor-rating endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch filters by subject correctly", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('CS');
+  });
+  
+  expect(result.current.filtered).toHaveLength(2);
+  expect(result.current.filtered.every(course => course.subject === 'CS')).toBe(true);
 });
 
-test("ping /api/v1/pin endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/pin`);
-    console.log(`/api/v1/pin - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/pin endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch filters by catalog number", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('101');
+  });
+  
+  expect(result.current.filtered).toHaveLength(2);
+  expect(result.current.filtered.every(course => course.catalog_nbr === '101')).toBe(true);
 });
 
-test("ping /api/v1/planner endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/planner`);
-    console.log(`/api/v1/planner - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/planner endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch filters by title", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('Data');
+  });
+  
+  expect(result.current.filtered).toHaveLength(1);
+  expect(result.current.filtered[0].title).toBe('Data Structures');
 });
 
-test("ping /api/v1/watchlist endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/watchlist`);
-    console.log(`/api/v1/watchlist - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/watchlist endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch handles combined search", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('CS101');
+  });
+  
+  expect(result.current.filtered).toHaveLength(1);
+  expect(result.current.filtered[0].subject).toBe('CS');
+  expect(result.current.filtered[0].catalog_nbr).toBe('101');
 });
 
-test("ping /api/v1/track endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/track`);
-    console.log(`/api/v1/track - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/track endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch is case insensitive", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('cs');
+  });
+  
+  expect(result.current.filtered).toHaveLength(2);
+  expect(result.current.filtered.every(course => course.subject === 'CS')).toBe(true);
 });
 
-test("ping /api/v1/tracking/quarter endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/tracking/quarter`);
-    console.log(`/api/v1/tracking/quarter - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/tracking/quarter endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch removes duplicates", () => {
+  const duplicateData = [...mockCoursesData, mockCoursesData[0]];
+  const { result } = renderHook(() => useCourseSearch(duplicateData));
+  
+  expect(result.current.filtered).toHaveLength(3);
 });
 
-test("ping /api/v1/get-carriers endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/get-carriers`);
-    console.log(`/api/v1/get-carriers - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/get-carriers endpoint error:', error);
-    throw error;
-  }
+test("useCourseSearch handles empty query", () => {
+  const { result } = renderHook(() => useCourseSearch(mockCoursesData));
+  
+  act(() => {
+    result.current.setQuery('NONEXISTENT');
+  });
+  
+  expect(result.current.filtered).toHaveLength(0);
+  
+  act(() => {
+    result.current.setQuery('');
+  });
+  
+  expect(result.current.filtered).toHaveLength(3);
 });
 
-test("ping /api/v1/trackingStatus endpoint", async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/trackingStatus`);
-    console.log(`/api/v1/trackingStatus - Status: ${response.status}, OK: ${response.ok}`);
-    expect(response).toBeDefined();
-    expect(typeof response.status).toBe('number');
-  } catch (error) {
-    console.error('/api/v1/trackingStatus endpoint error:', error);
-    throw error;
-  }
+// PinnedCoursesPanel Component Tests
+test("PinnedCoursesPanel renders empty state correctly", () => {
+  const mockOnSelect = vi.fn();
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={[]}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  expect(screen.getByText('Pinned Courses')).toBeDefined();
+  expect(screen.getByText('No pinned courses.')).toBeDefined();
 });
 
+test("PinnedCoursesPanel renders pinned courses list", () => {
+  const mockOnSelect = vi.fn();
+  const pinnedCourses = [mockCoursesData[0], mockCoursesData[1]];
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  expect(screen.getByText('Pinned Courses')).toBeDefined();
+  expect(screen.getByText(/CS 101.*Introduction to Computer Science/)).toBeDefined();
+  expect(screen.getByText(/CS 250.*Data Structures/)).toBeDefined();
+  expect(screen.queryByText('No pinned courses.')).toBeNull();
+});
+
+test("PinnedCoursesPanel highlights selected course", () => {
+  const mockOnSelect = vi.fn();
+  const pinnedCourses = [mockCoursesData[0], mockCoursesData[1]];
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={mockCoursesData[0]}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  const selectedCourse = screen.getByText(/CS 101.*Introduction to Computer Science/).closest('li');
+  const unselectedCourse = screen.getByText(/CS 250.*Data Structures/).closest('li');
+  
+  expect(selectedCourse?.className).toContain('bg-gray-200');
+  expect(unselectedCourse?.className).not.toContain('bg-gray-200');
+  expect(unselectedCourse?.className).toContain('hover:bg-gray-100');
+});
+
+test("PinnedCoursesPanel calls onSelect when course is clicked", () => {
+  const mockOnSelect = vi.fn();
+  const pinnedCourses = [mockCoursesData[0], mockCoursesData[1]];
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  const firstCourse = screen.getByText(/CS 101.*Introduction to Computer Science/);
+  const secondCourse = screen.getByText(/CS 250.*Data Structures/);
+  
+  fireEvent.click(firstCourse);
+  expect(mockOnSelect).toHaveBeenCalledWith(mockCoursesData[0]);
+  
+  fireEvent.click(secondCourse);
+  expect(mockOnSelect).toHaveBeenCalledWith(mockCoursesData[1]);
+  
+  expect(mockOnSelect).toHaveBeenCalledTimes(2);
+});
+
+test("PinnedCoursesPanel displays course information correctly", () => {
+  const mockOnSelect = vi.fn();
+  const customCourse = {
+    ...mockCoursesData[0],
+    subject: 'PHYS',
+    catalog_nbr: '211',
+    title: 'Physics for Scientists and Engineers'
+  };
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={[customCourse]}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  expect(screen.getByText(/PHYS 211.*Physics for Scientists and Engineers/)).toBeDefined();
+});
+
+test("PinnedCoursesPanel handles multiple course selections", () => {
+  const mockOnSelect = vi.fn();
+  const pinnedCourses = mockCoursesData;
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  // RENDERING
+  expect(screen.getByText(/CS 101.*Introduction to Computer Science/)).toBeDefined();
+  expect(screen.getByText(/CS 250.*Data Structures/)).toBeDefined();
+  expect(screen.getByText(/MATH 101.*Calculus I/)).toBeDefined();
+  
+  // CALLBACK
+  const csIntro = screen.getByText(/CS 101.*Introduction to Computer Science/);
+  const csData = screen.getByText(/CS 250.*Data Structures/);
+  const mathCalc = screen.getByText(/MATH 101.*Calculus I/);
+  
+  fireEvent.click(csIntro);
+  expect(mockOnSelect).toHaveBeenLastCalledWith(mockCoursesData[0]);
+  
+  fireEvent.click(csData);
+  expect(mockOnSelect).toHaveBeenLastCalledWith(mockCoursesData[1]);
+  
+  fireEvent.click(mathCalc);
+  expect(mockOnSelect).toHaveBeenLastCalledWith(mockCoursesData[2]);
+  
+  expect(mockOnSelect).toHaveBeenCalledTimes(3);
+});
+
+test("PinnedCoursesPanel generates unique keys for courses", () => {
+  const mockOnSelect = vi.fn();
+  const duplicateSubjectCourses = [
+    { ...mockCoursesData[0], catalog_nbr: '101' },
+    { ...mockCoursesData[0], catalog_nbr: '102' },
+    { ...mockCoursesData[0], catalog_nbr: '103' }
+  ];
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={duplicateSubjectCourses}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+
+  const courseItems = screen.getAllByText(/CS \d+.*Introduction to Computer Science/);
+  expect(courseItems).toHaveLength(3);
+});
+
+test("PinnedCoursesPanel maintains selection state across re-renders", () => {
+  const mockOnSelect = vi.fn();
+  const pinnedCourses = [mockCoursesData[0], mockCoursesData[1]];
+  
+  const { rerender } = render(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={mockCoursesData[0]}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  let selectedCourse = screen.getByText(/CS 101.*Introduction to Computer Science/).closest('li');
+  expect(selectedCourse?.className).toContain('bg-gray-200');
+  
+  rerender(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={mockCoursesData[1]}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  const newSelectedCourse = screen.getByText(/CS 250.*Data Structures/).closest('li');
+  const oldSelectedCourse = screen.getByText(/CS 101.*Introduction to Computer Science/).closest('li');
+  
+  expect(newSelectedCourse?.className).toContain('bg-gray-200');
+  expect(oldSelectedCourse?.className).not.toContain('bg-gray-200');
+});
+
+test("PinnedCoursesPanel handles empty selection state", () => {
+  const mockOnSelect = vi.fn();
+  const pinnedCourses = [mockCoursesData[0], mockCoursesData[1]];
+  
+  render(
+    <PinnedCoursesPanel
+      pinned={pinnedCourses}
+      selected={null}
+      onSelect={mockOnSelect}
+    />
+  );
+  
+  const firstCourse = screen.getByText(/CS 101.*Introduction to Computer Science/).closest('li');
+  const secondCourse = screen.getByText(/CS 250.*Data Structures/).closest('li');
+  
+  expect(firstCourse?.className).not.toContain('bg-gray-200');
+  expect(secondCourse?.className).not.toContain('bg-gray-200');
+  expect(firstCourse?.className).toContain('hover:bg-gray-100');
+  expect(secondCourse?.className).toContain('hover:bg-gray-100');
+});
+
+// CourseTable Component Tests
+test("CourseTable renders table headers correctly", () => {
+  render(<CourseTable sections={[]} />);
+  
+  expect(screen.getByText('Type')).toBeDefined();
+  expect(screen.getByText('Days')).toBeDefined();
+  expect(screen.getByText('Time')).toBeDefined();
+  expect(screen.getByText('Location')).toBeDefined();
+  expect(screen.getByText('Instructor(s)')).toBeDefined();
+});
+
+test("CourseTable renders empty table with headers only", () => {
+  render(<CourseTable sections={[]} />);
+  
+  expect(screen.getByText('Type')).toBeDefined();
+
+  expect(screen.queryByText('LEC')).toBeNull();
+  expect(screen.queryByText('MWF')).toBeNull();
+});
+
+test("CourseTable renders single course section correctly", () => {
+  const singleSection = [mockCoursesData[0]];
+  
+  render(<CourseTable sections={singleSection} />);
+  
+  expect(screen.getByText('LEC')).toBeDefined();
+  expect(screen.getByText('MWF')).toBeDefined();
+  expect(screen.getByText('09:00—10:00')).toBeDefined();
+  expect(screen.getByText('TECH 101')).toBeDefined();
+  expect(screen.getByText('Dr. Smith')).toBeDefined();
+});
+
+test("CourseTable renders multiple course sections", () => {
+  render(<CourseTable sections={mockCoursesData} />);
+  expect(screen.getAllByText('LEC')).toHaveLength(3);
+  
+  expect(screen.getByText('TTH')).toBeDefined();
+  expect(screen.getByText('09:00—10:00')).toBeDefined();
+  expect(screen.getByText('14:00—15:30')).toBeDefined();
+  expect(screen.getByText('10:00—11:00')).toBeDefined();
+  
+  expect(screen.getByText('Dr. Smith')).toBeDefined();
+  expect(screen.getByText('Dr. Johnson')).toBeDefined();
+  expect(screen.getByText('Dr. Wilson')).toBeDefined();
+});
+
+test("CourseTable displays multiple instructors for single section", () => {
+  const sectionWithMultipleInstructors = {
+    ...mockCoursesData[0],
+    instructors: [
+      { cruzid: 'dsmith', name: 'Dr. Smith' },
+      { cruzid: 'djones', name: 'Dr. Jones' },
+      { cruzid: 'dbrown', name: 'Dr. Brown' }
+    ]
+  };
+  
+  render(<CourseTable sections={[sectionWithMultipleInstructors]} />);
+  
+  expect(screen.getByText('Dr. Smith, Dr. Jones, Dr. Brown')).toBeDefined();
+});
+
+test("CourseTable handles sections with no instructors", () => {
+  const sectionWithNoInstructors = {
+    ...mockCoursesData[0],
+    instructors: []
+  };
+  
+  render(<CourseTable sections={[sectionWithNoInstructors]} />);
+  
+  expect(screen.getByText('LEC')).toBeDefined();
+  expect(screen.getByText('MWF')).toBeDefined();
+  
+  const rows = screen.getByRole('table').querySelectorAll('tbody tr');
+  expect(rows).toHaveLength(1);
+  const instructorCell = rows[0].querySelectorAll('td')[4];
+  expect(instructorCell.textContent).toBe('');
+});
+
+test("CourseTable generates unique keys for sections", () => {
+  const duplicateSections = [
+    { ...mockCoursesData[0], class_section: '001' },
+    { ...mockCoursesData[0], class_section: '002' },
+    { ...mockCoursesData[0], class_section: '003' }
+  ];
+  
+  render(<CourseTable sections={duplicateSections} />);
+  
+  const rows = screen.getByRole('table').querySelectorAll('tbody tr');
+  expect(rows).toHaveLength(3);
+});
+
+test("CourseTable displays different course components correctly", () => {
+  const mixedComponents = [
+    { ...mockCoursesData[0], component: 'LEC' },
+    { ...mockCoursesData[0], component: 'LAB', class_section: '002' },
+    { ...mockCoursesData[0], component: 'DIS', class_section: '003' }
+  ];
+  
+  render(<CourseTable sections={mixedComponents} />);
+  
+  expect(screen.getByText('LEC')).toBeDefined();
+  expect(screen.getByText('LAB')).toBeDefined();
+  expect(screen.getByText('DIS')).toBeDefined();
+});
+
+test("CourseTable handles missing or empty location", () => {
+  const sectionWithEmptyLocation = {
+    ...mockCoursesData[0],
+    location: ''
+  };
+  
+  render(<CourseTable sections={[sectionWithEmptyLocation]} />);
+  
+  const rows = screen.getByRole('table').querySelectorAll('tbody tr');
+  expect(rows).toHaveLength(1);
+  const locationCell = rows[0].querySelectorAll('td')[3];
+  expect(locationCell.textContent).toBe('');
+});
+
+test("CourseTable displays time ranges correctly", () => {
+  const customTimeSection = {
+    ...mockCoursesData[0],
+    start_time: '08:00',
+    end_time: '09:30'
+  };
+  
+  render(<CourseTable sections={[customTimeSection]} />);
+  
+  expect(screen.getByText('08:00—09:30')).toBeDefined();
+});
+
+test("CourseTable handles various meeting day patterns", () => {
+  const variousMeetingDays = [
+    { ...mockCoursesData[0], meeting_days: 'MWF', class_section: '001' },
+    { ...mockCoursesData[0], meeting_days: 'TTH', class_section: '002' },
+    { ...mockCoursesData[0], meeting_days: 'MW', class_section: '003' },
+    { ...mockCoursesData[0], meeting_days: 'F', class_section: '004' }
+  ];
+  
+  render(<CourseTable sections={variousMeetingDays} />);
+  
+  expect(screen.getByText('MWF')).toBeDefined();
+  expect(screen.getByText('TTH')).toBeDefined();
+  expect(screen.getByText('MW')).toBeDefined();
+  expect(screen.getByText('F')).toBeDefined();
+});
