@@ -110,7 +110,7 @@ import React from "react";
 import { useCourseSearch } from "../src/app/dashboard/tab-1/hooks/useCourseSearch";
 import { CourseTable } from "../src/app/dashboard/tab-1/components/CourseTable";
 import { PinnedCoursesPanel } from "../src/app/dashboard/tab-1/components/PinnedCoursesPanel";
-import { CourseDetails } from "../src/app/dashboard/tab-1/components/CourseDetails";
+// import { CourseDetails } from "../src/app/dashboard/tab-1/components/CourseDetails";
 
 
 const mockCoursesData = [
@@ -573,7 +573,7 @@ test("PinnedCoursesPanel maintains selection state across re-renders", () => {
     />
   );
   
-  let selectedCourse = screen.getByText(/CS 101.*Introduction to Computer Science/).closest('li');
+  const selectedCourse = screen.getByText(/CS 101.*Introduction to Computer Science/).closest('li');
   expect(selectedCourse?.className).toContain('bg-gray-200');
   
   rerender(
@@ -837,6 +837,7 @@ test("useCourseInfo handles credits", async () => {
     });
     
     const { useCourseInfo } = await import("../src/app/dashboard/tab-1/hooks/useCourseInfo");
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const result = await useCourseInfo({
       title: 'Test Course',
       catalog_nbr: '101',
@@ -920,6 +921,7 @@ test("Watchlist: Add course validation", () => {
 
   const quarter = "Fall 2024";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const createAddWatchlistRequest = (course: any, quarter: string) => ({
     subject: course.subject,
     catalog_nbr: course.catalog_nbr,
@@ -945,6 +947,7 @@ test("Watchlist: Remove course validation", () => {
     catalog_nbr: "101"
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const createRemoveWatchlistRequest = (course: any) => ({
     subject: course.subject,
     catalog_nbr: course.catalog_nbr
