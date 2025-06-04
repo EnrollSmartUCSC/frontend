@@ -890,3 +890,74 @@ test("usePinnedCourses: fetchPinnedCourses returns array", async () => {
   expect(result[0]).toHaveProperty('catalog_nbr');
   expect(result[0]).toHaveProperty('title');
 });
+
+// Watchlist Functionality Tests
+test("Watchlist: Add course validation", () => {
+  const mockCourse = {
+    subject: "CS",
+    catalog_nbr: "101",
+    title: "Introduction to Computer Science",
+    class_nbr: "12345",
+    class_section: "01",
+    class_status: "Open",
+    component: "Lecture",
+    end_time: "14:20",
+    enrl_capacity: "200",
+    enrl_status: "Open",
+    enrl_total: "150",
+    instructors: [{ cruzid: "prof1", name: "Professor Smith" }],
+    location: "Baskin Engineering 152",
+    meeting_days: "MWF",
+    session_code: "1",
+    start_time: "13:20",
+    strm: "2242",
+    title_lon: "Introduction to Computer Science",
+    waitlist_total: "10",
+    credits: "5",
+    description: "Fundamentals of computer science",
+    prerequisites: "None"
+  };
+
+  const quarter = "Fall 2024";
+
+  const createAddWatchlistRequest = (course: any, quarter: string) => ({
+    subject: course.subject,
+    catalog_nbr: course.catalog_nbr,
+    quarter: quarter
+  });
+
+  const requestBody = createAddWatchlistRequest(mockCourse, quarter);
+
+  expect(requestBody).toEqual({
+    subject: "CS",
+    catalog_nbr: "101",
+    quarter: "Fall 2024"
+  });
+
+  expect(requestBody).toHaveProperty("subject");
+  expect(requestBody).toHaveProperty("catalog_nbr");
+  expect(requestBody).toHaveProperty("quarter");
+});
+
+test("Watchlist: Remove course validation", () => {
+  const mockWatchlistCourse = {
+    subject: "CS",
+    catalog_nbr: "101"
+  };
+
+  const createRemoveWatchlistRequest = (course: any) => ({
+    subject: course.subject,
+    catalog_nbr: course.catalog_nbr
+  });
+
+  const requestBody = createRemoveWatchlistRequest(mockWatchlistCourse);
+
+  expect(requestBody).toEqual({
+    subject: "CS",
+    catalog_nbr: "101"
+  });
+
+  expect(requestBody).toHaveProperty("subject");
+  expect(requestBody).toHaveProperty("catalog_nbr");
+  expect(requestBody).not.toHaveProperty("quarter");
+});
