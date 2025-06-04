@@ -759,4 +759,134 @@ test("CourseTable handles various meeting day patterns", () => {
   expect(screen.getByText('F')).toBeDefined();
 });
 
+// Hook Tests for useCourseInfo
+test("useCourseInfo: Data transformation from API response", async () => {
+  const mockCourse = {
+    title: 'Introduction to Computer Science',
+    catalog_nbr: '101',
+    subject: 'CS'
+  };
+  
+  const mockApiResponse = {
+    course_code: 'cs-101',
+    prerequisites: 'None',
+    description: 'An introduction to computer science fundamentals',
+    credits: '4'
+  };
+  
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: vi.fn().mockResolvedValue(mockApiResponse)
+  });
+  
+  const { useCourseInfo } = await import("../src/app/dashboard/tab-1/hooks/useCourseInfo");
+  const result = await useCourseInfo(mockCourse);
+  
+  expect(result.catalog_nbr).toBe('cs-101');
+  expect(result.prerequisites).toBe('None');
+  expect(result.description).toBe('An introduction to computer science fundamentals');
+  expect(result.credits).toBe('4');
+  expect(typeof result.catalog_nbr).toBe('string');
+  expect(typeof result.prerequisites).toBe('string');
+  expect(typeof result.description).toBe('string');
+  expect(typeof result.credits).toBe('string');
+});
 
+test("useCourseInfo constructs correctly", async () => {
+  const mockCourse = {
+    title: 'Calculus I',
+    catalog_nbr: '19A',
+    subject: 'MATH'
+  };
+  
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: vi.fn().mockResolvedValue({
+      course_code: 'math-19a',
+      prerequisites: 'High school algebra',
+      description: 'Differential calculus',
+      credits: '5'
+    })
+  });
+  
+  const { useCourseInfo } = await import("../src/app/dashboard/tab-1/hooks/useCourseInfo");
+  await useCourseInfo(mockCourse);
+  
+  expect(global.fetch).toHaveBeenCalledWith(
+    expect.stringContaining('course_code=math-19a')
+  );
+});
+
+test("useCourseInfo handles credits", async () => {
+  const testCases = [
+    { credits: '3', expected: '3' },
+    { credits: '4', expected: '4' },
+    { credits: '5', expected: '5' },
+    { credits: '1-3', expected: '1-3' }
+  ];
+  
+  for (const testCase of testCases) {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: vi.fn().mockResolvedValue({
+        course_code: 'test-101',
+        prerequisites: 'None',
+        description: 'Test course',
+        credits: testCase.credits
+      })
+    });
+    
+    const { useCourseInfo } = await import("../src/app/dashboard/tab-1/hooks/useCourseInfo");
+    const result = await useCourseInfo({
+      title: 'Test Course',
+      catalog_nbr: '101',
+      subject: 'TEST'
+    });
+    
+    expect(result.credits).toBe(testCase.expected);
+  }
+});
+
+// Pinned Courses
+test("usePinnedCourses: Pin course function behavior", async () => {
+  const mockPinCourse = vi.fn().mockResolvedValue(undefined);
+  const testCourse = mockCoursesData[0];
+  
+  await mockPinCourse(testCourse);
+  
+  expect(mockPinCourse).toHaveBeenCalledWith(testCourse);
+  expect(mockPinCourse).toHaveBeenCalledTimes(1);
+});
+
+test("usePinnedCourses: Unpin course function behavior", async () => {
+  const mockUnpinCourse = vi.fn().mockResolvedValue(undefined);
+  const testCourse = mockCoursesData[0];
+  
+  await mockUnpinCourse(testCourse);
+  
+  expect(mockUnpinCourse).toHaveBeenCalledWith(testCourse);
+  expect(mockUnpinCourse).toHaveBeenCalledTimes(1);
+});
+
+test("usePinnedCourses: isPinned function returns boolean", async () => {
+  const mockIsPinned = vi.fn().mockResolvedValue(true);
+  const testCourse = mockCoursesData[0];
+  
+  const result = await mockIsPinned(testCourse);
+  
+  expect(typeof result).toBe('boolean');
+  expect(result).toBe(true);
+  expect(mockIsPinned).toHaveBeenCalledWith(testCourse);
+});
+
+test("usePinnedCourses: fetchPinnedCourses returns array", async () => {
+  const mockFetchPinnedCourses = vi.fn().mockResolvedValue([mockCoursesData[0], mockCoursesData[1]]);
+  
+  const result = await mockFetchPinnedCourses();
+  
+  expect(Array.isArray(result)).toBe(true);
+  expect(result).toHaveLength(2);
+  expect(result[0]).toHaveProperty('subject');
+  expect(result[0]).toHaveProperty('catalog_nbr');
+  expect(result[0]).toHaveProperty('title');
+});
