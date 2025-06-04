@@ -1,0 +1,80 @@
+/* Figma-generated code, slightly adjusted */
+
+.mainContainer {
+  position: relative;
+  width: 100%;
+
+}
+
+.mainRect {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #EFFCFF;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  box-shadow: 0 10px 25px #3288CA29;
+  margin: 0 auto;
+}
+
+.mainRectInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcomeText {
+  font-size: 20px;
+  margin-bottom: 1rem;
+  color: #1A1A1A;
+  text-align: center;
+}
+
+.googleLogin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 2px solid #39B8DB;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.orText {
+  text-align: center;
+  margin: 1rem 0;
+  color: #777777;
+}
+
+.emailField,
+.passwordField {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #CCCCCC;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.continueButton {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #0D60AD;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.signupText {
+  font-size: 14px;
+  color: #555555;
+}
+
+.signupLink {
+  color: #39B8DB;
+  cursor: pointer;
+  text-decoration: underline;
+}
