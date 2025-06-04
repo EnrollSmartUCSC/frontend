@@ -21,7 +21,7 @@ export default function DashboardLayout({
       // User is signed in, you can access user information here
       const user = auth.currentUser;
       user?.getIdToken().then(async (token) => {
-        console.log("User token:", token);
+        // console.log("User token:", token);
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/google-signin`, {
       method: "POST",
       headers: {
