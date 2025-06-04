@@ -108,10 +108,7 @@ test('sign up with email and password', async () => {
 
 import React from "react";
 import { useCourseSearch } from "../src/app/dashboard/tab-1/hooks/useCourseSearch";
-import { useCourses } from "../src/app/dashboard/tab-1/hooks/useCourses";
-
 import { CourseTable } from "../src/app/dashboard/tab-1/components/CourseTable";
-import { SearchPanel } from "../src/app/dashboard/tab-1/components/SearchPanel";
 import { PinnedCoursesPanel } from "../src/app/dashboard/tab-1/components/PinnedCoursesPanel";
 import { CourseDetails } from "../src/app/dashboard/tab-1/components/CourseDetails";
 
@@ -761,3 +758,5 @@ test("CourseTable handles various meeting day patterns", () => {
   expect(screen.getByText('MW')).toBeDefined();
   expect(screen.getByText('F')).toBeDefined();
 });
+
+
