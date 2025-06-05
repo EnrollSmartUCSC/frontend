@@ -31,6 +31,7 @@ export default function QuarterPlannerPage({season, year, plan, setPlan}: {
                       className={`border p-2 align-top relative ${
                         isOver ? "bg-green-100" : "hover:bg-gray-50"
                       }`}
+                      aria-label={quarterId}
                     >
                       <div className="space-y-2 mb-12">
                         {courses.map((c) => (
