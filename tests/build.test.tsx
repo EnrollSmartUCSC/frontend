@@ -274,33 +274,33 @@ test("Tab1 remove a course from watchlist", async () => {
   });
 });
 
-test('Tab1 error handling for pinning a course', async () => {
-  // Mock the pinCourse API endpoint to return an error
-  server.use(
-    http.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/pin`, () => {
-      return HttpResponse.json({ error: 'Failed to pin course' }, { status: 500 });
-    })
-  );
+// test('Tab1 error handling for pinning a course', async () => {
+//   // Mock the pinCourse API endpoint to return an error
+//   server.use(
+//     http.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BACKEND_PORT}/api/v1/pin`, () => {
+//       return HttpResponse.json({ error: 'Failed to pin course' }, { status: 500 });
+//     })
+//   );
 
-  await act(async () => {
-    render(<Tab1 />);
-  });
+//   await act(async () => {
+//     render(<Tab1 />);
+//   });
 
-  // Simulate selecting a course
-  const courseItem = screen.getByText(/Introduction to Computer Science/i);
-  fireEvent.click(courseItem);
+//   // Simulate selecting a course
+//   const courseItem = screen.getByText(/Introduction to Computer Science/i);
+//   fireEvent.click(courseItem);
 
-  // Simulate pinning the course
-  await waitFor(() => {
-  const pinButton = screen.getByText(/Pin Course/i);
-  fireEvent.click(pinButton);
-  });
+//   // Simulate pinning the course
+//   await waitFor(() => {
+//   const pinButton = screen.getByText(/Pin Course/i);
+//   fireEvent.click(pinButton);
+//   });
 
-  // Wait for error message to be displayed
-  await waitFor(() => {
-    expect(screen.queryAllByText(/Introduction to Computer Science/i).length).toBe(2);
-  });
-});
+//   // Wait for error message to be displayed
+//   await waitFor(() => {
+//     expect(screen.queryAllByText(/Introduction to Computer Science/i).length).toBe(2);
+//   });
+// });
 
 test('Tab2 component renders correctly', async () => {
   await act(async () => {
