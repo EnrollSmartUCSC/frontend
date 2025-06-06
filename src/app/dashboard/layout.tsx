@@ -75,7 +75,7 @@ export default function DashboardLayout({
               className="block text-center py-2 rounded
               hover:cursor-pointer hover:bg-gray-300"
             >
-              Watchlist and tracking
+              Watchlist and Tracking
             </button>
 
             <button
